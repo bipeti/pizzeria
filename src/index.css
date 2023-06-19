@@ -17,6 +17,8 @@ body {
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     --FONT-SIZE: calc(15px + 0.390625vw);
     line-height: 24px;
+    max-width: 1200px;
+    margin: auto;
 
     /*---CART---*/
     --MAINCART-WIDTH: 200px;

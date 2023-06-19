@@ -5,10 +5,11 @@
 .group {
     background-color: rgb(182, 175, 175);
     border-top: solid rgb(48, 47, 47) 1px;
+    text-align: left;
+    padding: 0.5rem;
 }
 
 .ReactCollapse--content {
-    /* border: none; */
     color: black;
     background-color: white;
 }

@@ -1,7 +1,7 @@
 import { Collapsible } from "../Layout/Collapsible";
+import Cart from "./Cart";
 import FoodItem from "./FoodItem";
 import classes from "./Foods.module.css";
-import { createPortal } from "react-dom";
 
 export type Details = {
     name: string;
@@ -90,6 +90,34 @@ const DUMMY_PRODUCTS: Food[] = [
         ],
         packigingFee: 200,
     },
+    {
+        id: 5,
+        name: "Paradicsomleves",
+        description: "marhából",
+        group: "Leves",
+        price: 1980,
+        haveChildrenSize: true,
+        priceOfChildrenSize: 1400,
+        extras: [
+            { name: "csipőspaprika", price: 250 },
+            { name: "kenyér szelet", price: 50 },
+        ],
+        packigingFee: 200,
+    },
+    {
+        id: 6,
+        name: "Fokhagymakrémleves",
+        description: "marhából",
+        group: "Leves",
+        price: 1980,
+        haveChildrenSize: true,
+        priceOfChildrenSize: 1400,
+        extras: [
+            { name: "csipőspaprika", price: 250 },
+            { name: "kenyér szelet", price: 50 },
+        ],
+        packigingFee: 200,
+    },
 ];
 
 const Foods = () => {
@@ -112,11 +140,7 @@ const Foods = () => {
                     </Collapsible>
                 ))}
             </div>
-            <div className={classes.maincart}>Kosár</div>
-            {createPortal(
-                <div className={classes.subcart}>KisKosár</div>,
-                document.body
-            )}
+            <Cart />
         </div>
     );
 };
