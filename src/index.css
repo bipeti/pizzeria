@@ -18,7 +18,7 @@ body {
     --FONT-SIZE: calc(15px + 0.390625vw);
     line-height: 24px;
     max-width: 1200px;
-    margin: auto;
+    margin: 1em;
 
     /*---CART---*/
     --MAINCART-WIDTH: 200px;

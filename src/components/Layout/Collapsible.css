@@ -1,5 +1,5 @@
 .ReactCollapse--collapse {
-    transition: height 500ms;
+    transition: height 300ms;
 }
 
 .group {
@@ -7,9 +7,27 @@
     border-top: solid rgb(48, 47, 47) 1px;
     text-align: left;
     padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
 }
 
 .ReactCollapse--content {
     color: black;
     background-color: white;
+}
+
+.arrow {
+    width: 0;
+    height: 0;
+    margin-top: 5px;
+    margin-right: 5px;
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: #333 transparent transparent transparent;
+    transition: transform 0.3s;
+}
+
+.open .arrow {
+    transform: rotate(-180deg);
 }

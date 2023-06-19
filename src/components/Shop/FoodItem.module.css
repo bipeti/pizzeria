@@ -1,4 +1,45 @@
 .li {
-    padding: 1rem;
+    padding: 0.5rem 0;
+    /* text-align: left; */
+    border-bottom: solid 1px lightgray;
+    display: grid;
+    grid-template-areas: "name price button";
+    grid-auto-columns: auto 200px 60px;
+}
+
+.li:last-child {
+    border-bottom: none;
+}
+
+.name {
+    grid-area: name;
     text-align: left;
+}
+
+.name h3,
+p {
+    margin: 0;
+}
+
+.price {
+    grid-area: price;
+    /* margin: 1em; */
+    font-size: bigger;
+    /* padding-left: 1em; */
+    justify-self: end;
+    align-self: center;
+}
+
+.detailName {
+    font-size: small;
+}
+
+.detailPrice {
+    margin-left: 1em;
+}
+
+.orderbutton {
+    grid-area: button;
+    /* margin: 1em; */
+    place-self: center;
 }

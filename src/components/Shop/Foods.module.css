@@ -1,7 +1,7 @@
 .outer {
     display: flex;
     flex-flow: row wrap;
-    gap: 30px;
+    justify-content: space-between;
 }
 
 .products {

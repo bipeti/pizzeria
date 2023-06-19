@@ -15,8 +15,12 @@ export const Collapsible = ({ title, children }: CollapsibleProps) => {
 
     return (
         <>
-            <div onClick={handleToggle} className="group">
+            <div
+                onClick={handleToggle}
+                className={`group ${isOpen ? "open" : ""}`}
+            >
                 {title}
+                <div className="arrow"></div>
             </div>
             <Collapse isOpened={isOpen}>{children}</Collapse>
         </>

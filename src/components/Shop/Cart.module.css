@@ -9,8 +9,8 @@
     height: 70px;
     border: solid 1px red;
     position: sticky;
-    bottom: 0px;
-    background-color: orangered;
+    bottom: 0;
+    background-color: #ff4500;
     color: white;
     opacity: 80%;
 }
@@ -21,10 +21,11 @@
         flex-flow: column wrap;
         align-content: center;
         width: var(--MAINCART-WIDTH);
-        height: 300px;
+        min-height: 300px;
         border: solid 1px red;
+        top: 30px;
         position: sticky;
-        top: 0px;
+        /* z-index: 1; */
     }
 
     .subcart {

@@ -35,6 +35,7 @@ const DUMMY_PRODUCTS: Food[] = [
         prices: [
             { name: "32 cm", price: 3440 },
             { name: "45 cm", price: 5250 },
+            { name: "52 cm", price: 6550 },
         ],
         extras: [
             { name: "lila hagyma", price: 50 },
