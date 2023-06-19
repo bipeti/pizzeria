@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Collapse } from "react-collapse";
+import "./Collapsible.css"; // It needs to have given names of classes and don't allowed module.css to create unique names of classes
 
-interface CollapsibleProps extends React.PropsWithChildren<{}> {
+interface CollapsibleProps extends React.PropsWithChildren {
     title: string;
 }
 
@@ -13,9 +14,11 @@ export const Collapsible = ({ title, children }: CollapsibleProps) => {
     };
 
     return (
-        <div>
-            <div onClick={handleToggle}>{title}</div>
+        <>
+            <div onClick={handleToggle} className="group">
+                {title}
+            </div>
             <Collapse isOpened={isOpen}>{children}</Collapse>
-        </div>
+        </>
     );
 };

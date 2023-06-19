@@ -17,6 +17,7 @@ export type Food = {
     priceOfChildrenSize?: number;
     prices?: Details[]; // e.g. different sizes of pizzas
     extras: Details[]; // e.g. topping to pizza, or bread to sg. that is choosable to this
+    packigingFee: number;
 };
 
 // type FoodsProps = {
@@ -41,6 +42,7 @@ const DUMMY_PRODUCTS: Food[] = [
             { name: "gomba", price: 100 },
             { name: "olivabogyó", price: 250 },
         ],
+        packigingFee: 100,
     },
     {
         id: 2,
@@ -60,6 +62,7 @@ const DUMMY_PRODUCTS: Food[] = [
             { name: "gomba", price: 100 },
             { name: "olivabogyó", price: 250 },
         ],
+        packigingFee: 100,
     },
     {
         id: 3,
@@ -70,6 +73,7 @@ const DUMMY_PRODUCTS: Food[] = [
         haveChildrenSize: true,
         priceOfChildrenSize: 1100,
         extras: [{ name: "csipőspaprika", price: 250 }],
+        packigingFee: 200,
     },
     {
         id: 4,
@@ -83,6 +87,7 @@ const DUMMY_PRODUCTS: Food[] = [
             { name: "csipőspaprika", price: 250 },
             { name: "kenyér szelet", price: 50 },
         ],
+        packigingFee: 200,
     },
 ];
 
@@ -92,20 +97,22 @@ const Foods = () => {
     ];
 
     return (
-        <section className={classes.products}>
-            <h2>Buy your favorite products</h2>
-            <ul>
+        <div className={classes.outer}>
+            <div className={classes.products}>
                 {uniqueGroups.map((group) => (
                     <Collapsible title={group}>
-                        {DUMMY_PRODUCTS.filter(
-                            (food) => food.group === group
-                        ).map((food) => (
-                            <FoodItem food={food} />
-                        ))}
+                        <ul>
+                            {DUMMY_PRODUCTS.filter(
+                                (food) => food.group === group
+                            ).map((food) => (
+                                <FoodItem food={food} />
+                            ))}
+                        </ul>
                     </Collapsible>
                 ))}
-            </ul>
-        </section>
+            </div>
+            <div className={classes.maincart}>Kosár</div>
+        </div>
     );
 };
 
