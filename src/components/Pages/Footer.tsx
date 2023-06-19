@@ -1,5 +1,3 @@
-import classes from "./Footer.module.css";
-
 export default function Footer() {
     return (
         <>
@@ -48,7 +46,6 @@ export default function Footer() {
                 Accumsan facer Investigationes qui eum fiant. Me habent cum est
                 eu feugait.
             </p>
-            <div className={classes.subcart}>KisKosár</div>
         </>
     );
 }

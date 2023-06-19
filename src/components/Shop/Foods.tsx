@@ -1,6 +1,7 @@
 import { Collapsible } from "../Layout/Collapsible";
 import FoodItem from "./FoodItem";
 import classes from "./Foods.module.css";
+import { createPortal } from "react-dom";
 
 export type Details = {
     name: string;
@@ -112,6 +113,10 @@ const Foods = () => {
                 ))}
             </div>
             <div className={classes.maincart}>Kosár</div>
+            {createPortal(
+                <div className={classes.subcart}>KisKosár</div>,
+                document.body
+            )}
         </div>
     );
 };
