@@ -1,7 +1,9 @@
 import { Collapsible } from "../Layout/Collapsible";
 import Cart from "./Cart";
+import Extras from "./Extras";
 import FoodItem from "./FoodItem";
 import classes from "./Foods.module.css";
+import { useState } from "react";
 
 export type Details = {
     name: string;
@@ -122,12 +124,23 @@ const DUMMY_PRODUCTS: Food[] = [
 ];
 
 const Foods = () => {
+    const [extras, setExtras] = useState(false);
+
+    const hideModalHandler = () => {
+        setExtras(false);
+    };
+
+    const showModalHandler = () => {
+        setExtras(true);
+    };
+
     const uniqueGroups = [
         ...new Set(DUMMY_PRODUCTS.map((product) => product.group)),
     ];
 
     return (
         <div className={classes.outer}>
+            {extras && <Extras onClose={hideModalHandler} />}
             <div className={classes.products}>
                 {uniqueGroups.map((group) => (
                     <Collapsible title={group}>
@@ -135,7 +148,10 @@ const Foods = () => {
                             {DUMMY_PRODUCTS.filter(
                                 (food) => food.group === group
                             ).map((food) => (
-                                <FoodItem food={food} />
+                                <FoodItem
+                                    food={food}
+                                    showExtras={showModalHandler}
+                                />
                             ))}
                         </ul>
                     </Collapsible>

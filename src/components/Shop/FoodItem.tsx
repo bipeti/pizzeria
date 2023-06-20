@@ -3,9 +3,14 @@ import { Food } from "./Foods";
 
 type FoodItemProps = {
     food: Food;
+    showExtras: () => void;
 };
 
-const FoodItem = ({ food }: FoodItemProps) => {
+const FoodItem = ({ food, showExtras }: FoodItemProps) => {
+    const addToCart = () => {
+        showExtras();
+    };
+
     return (
         <li className={classes.li}>
             <div className={classes.name}>
@@ -48,7 +53,7 @@ const FoodItem = ({ food }: FoodItemProps) => {
                 )}
             </div>
             <div className={classes.orderbutton}>
-                <input type="button" value="KOS" />
+                <input type="button" value="KOS" onClick={addToCart} />
             </div>
         </li>
     );
