@@ -20,10 +20,11 @@
         display: flex;
         flex-flow: column wrap;
         align-content: center;
+        align-self: flex-start;
         width: var(--MAINCART-WIDTH);
         min-height: 300px;
         border: solid 1px red;
-        top: 30px;
+        top: 0;
         position: sticky;
         /* z-index: 1; */
     }
