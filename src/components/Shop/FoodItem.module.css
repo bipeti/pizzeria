@@ -30,14 +30,6 @@ p {
     align-self: center;
 }
 
-.detailName {
-    font-size: small;
-}
-
-.detailPrice {
-    margin-left: 1em;
-}
-
 .orderbutton {
     grid-area: button;
     /* margin: 1em; */

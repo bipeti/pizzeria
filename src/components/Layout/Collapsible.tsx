@@ -4,10 +4,15 @@ import "./Collapsible.css"; // It needs to have given names of classes and don't
 
 interface CollapsibleProps extends React.PropsWithChildren {
     title: string;
+    isOpened: boolean;
 }
 
-export const Collapsible = ({ title, children }: CollapsibleProps) => {
-    const [isOpen, setIsOpen] = useState(false);
+export const Collapsible = ({
+    title,
+    children,
+    isOpened,
+}: CollapsibleProps) => {
+    const [isOpen, setIsOpen] = useState(isOpened);
 
     const handleToggle = () => {
         setIsOpen(!isOpen);
