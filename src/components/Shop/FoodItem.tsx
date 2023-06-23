@@ -1,6 +1,6 @@
 import classes from "./FoodItem.module.css";
 import { Food } from "./Foods";
-import FoodPrices from "./FoodPrices";
+import FoodVarieties from "./FoodVarieties";
 import { useState } from "react";
 
 type FoodItemProps = {
@@ -11,14 +11,15 @@ type FoodItemProps = {
 const FoodItem = ({ food, onAddToCart }: FoodItemProps) => {
     const [selectedPrice, setSelectedPrice] = useState<String>();
 
-    let haveMorePrizes = food.prices !== undefined && food.prices.length > 0;
+    let hasMorePrizes =
+        food.varieties !== undefined && food.varieties.length > 0;
 
     const handleSelectedPrice = (selected: string) => {
         setSelectedPrice(selected);
     };
 
     const addToCartHandler = () => {
-        if (haveMorePrizes) {
+        if (hasMorePrizes) {
             if (!selectedPrice) {
                 alert("Válaszd ki valamelyik tételt!");
                 return;
@@ -28,17 +29,17 @@ const FoodItem = ({ food, onAddToCart }: FoodItemProps) => {
     };
 
     return (
-        <li className={classes.li}>
+        <div className={classes.li}>
             <div className={classes.name}>
                 <h3>{food.name}</h3>
                 <p>{food.description}</p>
             </div>
             <div className={classes.price}>
-                {food.prices !== undefined && food.prices.length > 0 && (
+                {food.varieties !== undefined && food.varieties.length > 0 && (
                     // if there are more prizes, not just 1
-                    <FoodPrices
+                    <FoodVarieties
                         foodId={food.id}
-                        foodPrizes={food.prices}
+                        foodVarieties={food.varieties}
                         handleSelectedPrice={handleSelectedPrice}
                     />
                 )}
@@ -53,7 +54,7 @@ const FoodItem = ({ food, onAddToCart }: FoodItemProps) => {
             <div className={classes.orderbutton}>
                 <button onClick={addToCartHandler}>KOS</button>
             </div>
-        </li>
+        </div>
     );
 };
 

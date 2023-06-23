@@ -1,3 +1,5 @@
+import { useDispatch } from "react-redux";
+import { cartActions } from "../../store/cart-slice";
 import { Collapsible } from "../Layout/Collapsible";
 import Cart from "./Cart";
 import Extras from "./Extras";
@@ -17,9 +19,9 @@ export type Food = {
     description: string; // e.g. ingredients
     group: string; // pizzas, soup, etc.
     price?: number;
-    haveChildrenServingSize: boolean;
+    hasChildrenServingSize: boolean;
     priceOfChildrenServingSize?: number;
-    prices?: Details[]; // e.g. different sizes of pizzas
+    varieties?: Details[]; // e.g. different sizes of pizzas
     extras?: Details[]; // e.g. topping to pizza, or bread to sg. that is choosable to this
     packigingFee: number;
 };
@@ -34,8 +36,8 @@ const DUMMY_PRODUCTS: Food[] = [
         name: "Margaréta pizza",
         description: "paradicsomszósz, paradicsom, bazsalikom, kevert sajt",
         group: "Pizza",
-        haveChildrenServingSize: false,
-        prices: [
+        hasChildrenServingSize: false,
+        varieties: [
             { id: 1, name: "32 cm", price: 3440 },
             { id: 2, name: "45 cm", price: 5250 },
             { id: 3, name: "52 cm", price: 6550 },
@@ -55,8 +57,8 @@ const DUMMY_PRODUCTS: Food[] = [
         description:
             "csípős paradicsomszósz, bacon, kolbász, csípős pepperoni paprika, hegyes erős, mozzarella sajt",
         group: "Pizza",
-        haveChildrenServingSize: false,
-        prices: [
+        hasChildrenServingSize: false,
+        varieties: [
             { id: 1, name: "32 cm", price: 3440 },
             { id: 2, name: "45 cm", price: 5250 },
         ],
@@ -75,7 +77,7 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "leveshússal, vele főtt zöldségekkel és lúdgégetésztával",
         group: "Leves",
         price: 1580,
-        haveChildrenServingSize: true,
+        hasChildrenServingSize: true,
         priceOfChildrenServingSize: 1100,
         extras: [{ id: 1, name: "csipőspaprika", price: 250 }],
         packigingFee: 200,
@@ -86,7 +88,7 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "marhából",
         group: "Leves",
         price: 1980,
-        haveChildrenServingSize: true,
+        hasChildrenServingSize: true,
         priceOfChildrenServingSize: 1400,
         extras: [
             { id: 1, name: "csipőspaprika", price: 250 },
@@ -100,7 +102,7 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "marhából",
         group: "Leves",
         price: 1980,
-        haveChildrenServingSize: true,
+        hasChildrenServingSize: true,
         priceOfChildrenServingSize: 1400,
         extras: [
             { id: 1, name: "csipőspaprika", price: 250 },
@@ -114,7 +116,7 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "marhából",
         group: "Leves",
         price: 1980,
-        haveChildrenServingSize: true,
+        hasChildrenServingSize: true,
         priceOfChildrenServingSize: 1400,
         extras: [
             { id: 1, name: "csipőspaprika", price: 250 },
@@ -128,7 +130,7 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "Kő, víz és még amit találunk a kamrában",
         group: "Leves",
         price: 980,
-        haveChildrenServingSize: false,
+        hasChildrenServingSize: false,
         packigingFee: 200,
     },
     {
@@ -137,13 +139,15 @@ const DUMMY_PRODUCTS: Food[] = [
         description: "Kávé, vanília fagyi, babapiskóta",
         group: "Sütemény",
         price: 780,
-        haveChildrenServingSize: true,
+        hasChildrenServingSize: true,
         priceOfChildrenServingSize: 100,
         packigingFee: 100,
     },
 ];
 
 const Foods = () => {
+    const dispatch = useDispatch();
+
     const [showExtrasModal, setShowExtrasModal] = useState(false);
     const [foodWidthExtras, setFoodWidthExtras] = useState<Food | null>();
     const [priceId, setPriceId] = useState<number | undefined>();
@@ -163,11 +167,22 @@ const Foods = () => {
         let isModal = false;
         isModal =
             (food.extras !== undefined && food.extras.length > 0) ||
-            food.haveChildrenServingSize;
+            food.hasChildrenServingSize;
         if (isModal) {
             setFoodWidthExtras(food);
             setPriceId(selectedPriceId);
             showModalHandler();
+        } else {
+            dispatch(
+                cartActions.addItemToCart({
+                    id: 1, // it recalculated in cart-slice
+                    foodName: food.name,
+                    price: food.price!, // in this scenario (no modal) it has to have price
+                    chosenChildrenServingSize: false,
+                    packingFee: food.packigingFee,
+                    quantity: 1,
+                })
+            );
         }
     };
 
@@ -185,22 +200,26 @@ const Foods = () => {
                 />
             )}
             <div className={classes.outer}>
-                <div className={classes.products}>
+                <ul className={classes.products}>
                     {uniqueGroups.map((group) => (
-                        <Collapsible title={group} isOpened={false}>
-                            <ul>
-                                {DUMMY_PRODUCTS.filter(
-                                    (food) => food.group === group
-                                ).map((food) => (
-                                    <FoodItem
-                                        food={food}
-                                        onAddToCart={addToCart}
-                                    />
-                                ))}
-                            </ul>
-                        </Collapsible>
+                        <li key={group}>
+                            <Collapsible title={group} isOpened={false}>
+                                <ul>
+                                    {DUMMY_PRODUCTS.filter(
+                                        (food) => food.group === group
+                                    ).map((food) => (
+                                        <li key={food.id}>
+                                            <FoodItem
+                                                food={food}
+                                                onAddToCart={addToCart}
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Collapsible>
+                        </li>
                     ))}
-                </div>
+                </ul>
                 <Cart />
             </div>
         </>

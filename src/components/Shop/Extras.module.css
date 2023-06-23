@@ -9,3 +9,19 @@
 .extraPrice {
     font-weight: bold;
 }
+
+.packing {
+    text-align: right;
+    padding: 1em 0;
+}
+
+.subTotal {
+    text-align: right;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.button {
+    text-align: right;
+    padding: 1em 0;
+}

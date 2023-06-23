@@ -1,29 +1,29 @@
-import classes from "./FoodPrices.module.css";
+import classes from "./FoodVarieties.module.css";
 import { Details } from "./Foods";
 
-type FoodPricesProps = {
+type FoodVarietiesProps = {
     foodId: number;
-    foodPrizes: Details[];
+    foodVarieties: Details[];
     handleSelectedPrice: (selected: string) => void;
 };
 
-const FoodPrices = ({
+const FoodVarieties = ({
     foodId,
-    foodPrizes,
+    foodVarieties,
     handleSelectedPrice,
-}: FoodPricesProps) => {
+}: FoodVarietiesProps) => {
     const radioHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleSelectedPrice(event.target.value);
     };
 
     return (
-        <>
-            {foodPrizes.map((detail) => (
-                <>
+        <ul>
+            {foodVarieties.map((detail) => (
+                <li key={"food" + foodId + "detail" + detail.id}>
                     <input
                         type="radio"
                         name={"food" + foodId}
-                        key={detail.id}
+                        key={"food" + foodId + "detail" + detail.id}
                         id={"food" + foodId + "detail" + detail.id}
                         value={detail.id}
                         onChange={radioHandler}
@@ -40,10 +40,10 @@ const FoodPrices = ({
                     >
                         {detail.price} {" Ft"} <br></br>
                     </label>
-                </>
+                </li>
             ))}
-        </>
+        </ul>
     );
 };
 
-export default FoodPrices;
+export default FoodVarieties;
