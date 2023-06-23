@@ -18,26 +18,38 @@ const Cart = () => {
 
     if (cartItems !== undefined && cartItems.length > 0) {
         cart = (
-            <>
-                <ul>
+            <div>
+                <ul className={classes.list}>
                     {cartItems.map((item) => (
-                        <li key={item.id}>
-                            X + {item.quantity} - E {item.foodName}
-                            {item.varietyName === "" ||
-                            item.varietyName === undefined
-                                ? ""
-                                : " - " + item.varietyName}
-                            {item.chosenChildrenServingSize
-                                ? " - Gyerekadag"
-                                : ""}{" "}
-                            {item.price}
+                        <li key={item.id} className={classes.element}>
+                            <div className={classes.foodName}>
+                                {item.foodName}{" "}
+                                {item.varietyName === "" ||
+                                item.varietyName === undefined
+                                    ? ""
+                                    : " - " + item.varietyName}
+                                {item.chosenChildrenServingSize
+                                    ? " - Gyerekadag"
+                                    : ""}{" "}
+                            </div>
+                            <div className={classes.smallbuttons}>
+                                <div>X + {item.quantity} - E</div>
+                                <div>{item.price}</div>
+                            </div>
                             {item.extras !== undefined &&
                                 item.extras.length > 0 && (
                                     <>
                                         <p>Extrák:</p>
                                         <ul>
                                             {item.extras?.map((extra) => (
-                                                <li>{extra.name}</li>
+                                                <li
+                                                    key={extra.id}
+                                                    className={
+                                                        classes.extrasList
+                                                    }
+                                                >
+                                                    {extra.name}
+                                                </li>
                                             ))}
                                         </ul>
                                     </>
@@ -45,9 +57,15 @@ const Cart = () => {
                         </li>
                     ))}
                 </ul>
-                <p className={classes.packing}>Csomagolás: {packingFee}</p>
-                <p className={classes.totalPrice}>Végösszeg: {totalPrice}</p>
-            </>
+                <div className={classes.packing}>
+                    <div>Csomagolás:</div>
+                    <div>{packingFee}</div>
+                </div>
+                <div className={classes.totalPrice}>
+                    <div>Végösszeg:</div>
+                    <div>{totalPrice}</div>
+                </div>
+            </div>
         );
 
         bottomCart = createPortal(

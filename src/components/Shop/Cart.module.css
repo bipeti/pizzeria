@@ -29,6 +29,47 @@
         /* z-index: 1; */
     }
 
+    .maincart .list {
+        text-align: left;
+        margin: 0.2em;
+    }
+
+    .maincart .list .element {
+        border-bottom: solid 1px lightgray;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    .maincart .foodName {
+        font-weight: bold;
+    }
+
+    .maincart .smallbuttons {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+    }
+
+    .maincart .packing,
+    .maincart .totalPrice {
+        margin: 0.5em 0.2em;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+    }
+
+    .maincart .extrasList {
+        display: inline;
+    }
+
+    .maincart .extrasList:after {
+        content: ", ";
+    }
+
+    .maincart .extrasList:last-child:after {
+        content: "";
+    }
+
     .subcart {
         display: none;
     }
