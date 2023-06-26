@@ -1,11 +1,12 @@
 import { useDispatch } from "react-redux";
-import { cartActions } from "../../store/cart-slice";
+import { CartState, cartActions } from "../../store/cart-slice";
 import { Collapsible } from "../Layout/Collapsible";
 import Cart from "./Cart";
 import Extras from "./Extras";
 import FoodItem from "./FoodItem";
 import classes from "./Foods.module.css";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export type Details = {
     id: number;
@@ -160,6 +161,10 @@ const Foods = () => {
         setShowExtrasModal(true);
     };
 
+    const cartItems = useSelector(
+        (state: { cart: CartState }) => state.cart.items
+    );
+
     const addToCart = (food: Food, selectedPriceId: number | undefined) => {
         /* If there is any extra belonging to the food or there is 
         children_serving_size available, then we show the Extras modal, else
@@ -173,16 +178,28 @@ const Foods = () => {
             setPriceId(selectedPriceId);
             showModalHandler();
         } else {
-            dispatch(
-                cartActions.addItemToCart({
-                    id: 1, // it recalculated in cart-slice
-                    foodName: food.name,
-                    price: food.price!, // in this scenario (no modal) it has to have price
-                    chosenChildrenServingSize: false,
-                    packingFee: food.packigingFee,
-                    quantity: 1,
-                })
+            const existingItem = cartItems.find(
+                (item) => item.foodId === food.id
             );
+            console.log(cartItems);
+
+            if (existingItem) {
+                dispatch(
+                    cartActions.increaseItemInCart({ id: existingItem.id })
+                );
+            } else {
+                dispatch(
+                    cartActions.addItemToCart({
+                        id: 1, // it recalculated in cart-slice
+                        foodId: food.id,
+                        foodName: food.name,
+                        price: food.price!, // in this scenario (no modal) it has to have price
+                        chosenChildrenServingSize: false,
+                        packingFee: food.packigingFee,
+                        quantity: 1,
+                    })
+                );
+            }
         }
     };
 

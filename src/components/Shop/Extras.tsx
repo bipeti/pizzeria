@@ -132,6 +132,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
         dispatch(
             cartActions.addItemToCart({
                 id: 1, // it recalculated in cart-slice
+                foodId: food.id,
                 foodName: food.name,
                 price: subTotal - food.packigingFee,
                 chosenChildrenServingSize: selectedChildrenPortion,
@@ -141,6 +142,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
                 varietyName: myVarietyName,
             })
         );
+        onClose();
     };
 
     return (
@@ -157,7 +159,8 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
             <div className={classes.subTotal}>
                 <p>Ár: {subTotal}</p>
             </div>
-            <div className={classes.button}>
+            <div className={classes.buttons}>
+                <button onClick={onClose}>Mégsem</button>
                 <button onClick={addToCartHandler}>Kosárba</button>
             </div>
         </Modal>

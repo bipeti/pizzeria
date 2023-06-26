@@ -29,9 +29,13 @@
         /* z-index: 1; */
     }
 
+    .content {
+        width: 100%;
+    }
+
     .maincart .list {
         text-align: left;
-        margin: 0.2em;
+        margin: 0.4em;
     }
 
     .maincart .list .element {
@@ -48,6 +52,16 @@
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
+    }
+    .maincart .smallbuttons img {
+        width: 16px;
+        height: 16px;
+        margin: 0 0.3em;
+        cursor: pointer;
+    }
+    .maincart .smallbuttons p {
+        margin: 0 0.3em;
+        display: inline;
     }
 
     .maincart .packing,

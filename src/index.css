@@ -22,7 +22,7 @@ body {
     padding: 0;
 
     /*---CART---*/
-    --MAINCART-WIDTH: 240px;
+    --MAINCART-WIDTH: 280px;
 }
 
 [data-theme="dark"],

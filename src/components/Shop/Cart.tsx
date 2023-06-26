@@ -1,9 +1,12 @@
 import { createPortal } from "react-dom";
 import classes from "./Cart.module.css";
 import { useSelector } from "react-redux";
-import { CartState } from "../../store/cart-slice";
+import { CartState, cartActions } from "../../store/cart-slice";
+import { useDispatch } from "react-redux";
 
 const Cart = () => {
+    const dispatch = useDispatch();
+
     let cart = <p>A kosarad üres.</p>;
     let bottomCart;
     const cartItems = useSelector(
@@ -16,9 +19,33 @@ const Cart = () => {
         (state: { cart: CartState }) => state.cart.totalPrice
     );
 
+    const removeFromCartHandler = (id: number) => {
+        dispatch(
+            cartActions.removeItemFromCart({
+                id,
+            })
+        );
+    };
+
+    const decreaseItemInCartHandler = (id: number) => {
+        dispatch(
+            cartActions.decreaseItemInCart({
+                id,
+            })
+        );
+    };
+
+    const increaseItemInCartHandler = (id: number) => {
+        dispatch(
+            cartActions.increaseItemInCart({
+                id,
+            })
+        );
+    };
+
     if (cartItems !== undefined && cartItems.length > 0) {
         cart = (
-            <div>
+            <div className={classes.content}>
                 <ul className={classes.list}>
                     {cartItems.map((item) => (
                         <li key={item.id} className={classes.element}>
@@ -33,7 +60,33 @@ const Cart = () => {
                                     : ""}{" "}
                             </div>
                             <div className={classes.smallbuttons}>
-                                <div>X + {item.quantity} - E</div>
+                                <div className={classes.buttons}>
+                                    <img
+                                        alt="trash"
+                                        src="trash-can.png"
+                                        onClick={removeFromCartHandler.bind(
+                                            null,
+                                            item.id
+                                        )}
+                                    />
+                                    <img
+                                        alt="plus"
+                                        src="plus.png"
+                                        onClick={increaseItemInCartHandler.bind(
+                                            null,
+                                            item.id
+                                        )}
+                                    />
+                                    <p>{item.quantity}</p>
+                                    <img
+                                        alt="minus"
+                                        src="minus.png"
+                                        onClick={decreaseItemInCartHandler.bind(
+                                            null,
+                                            item.id
+                                        )}
+                                    />
+                                </div>
                                 <div>{item.price}</div>
                             </div>
                             {item.extras !== undefined &&
