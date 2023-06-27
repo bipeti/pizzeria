@@ -1,14 +1,10 @@
-.li {
+.outer {
     padding: 0.5rem 0;
     /* text-align: left; */
-    border-bottom: solid 1px lightgray;
     display: grid;
     grid-template-areas: "name price button";
-    grid-auto-columns: auto 200px 60px;
-}
-
-.li:last-child {
-    border-bottom: none;
+    /* grid-auto-columns: auto 200px 60px; */
+    grid-auto-columns: auto auto 40px;
 }
 
 .name {
@@ -30,8 +26,52 @@ p {
     align-self: center;
 }
 
+.priceinvalid {
+    grid-area: price;
+    /* margin: 1em; */
+    font-size: bigger;
+    /* padding-left: 1em; */
+    justify-self: end;
+    align-self: center;
+    border: red dashed;
+    animation: shake 1s;
+}
+
+/* .priceinvalid:before {
+    color: red;
+    content: "Válassz ki egy tételt!";
+} */
+
 .orderbutton {
     grid-area: button;
     /* margin: 1em; */
     place-self: center;
+}
+.orderbutton img {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+@keyframes shake {
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
 }

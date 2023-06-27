@@ -17,7 +17,9 @@ type ModalOverlayProps = {
 const ModalOverlay = ({ children }: ModalOverlayProps) => {
     return (
         <div className={classes.modal}>
-            <div className={classes.content}>{children}</div>
+            <div className={classes.contentWrapper}>
+                <div className={classes.content}>{children}</div>
+            </div>
         </div>
     );
 };

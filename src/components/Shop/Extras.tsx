@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../../store/cart-slice";
 import { Details } from "../../components/Shop/Foods";
+import { numberToPrice } from "../utils/formatNumber";
 
 type ExtrasProps = {
     food: Food;
@@ -34,7 +35,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
         myVarietyName = myElement!.name;
         myPrice = myElement!.price;
     }
-    price = <h3>Alapár: {myPrice}</h3>;
+    price = <h3>Alapár: {numberToPrice(myPrice)}</h3>;
 
     const [subTotal, setSubTotal] = useState(myPrice + food.packigingFee);
 
@@ -88,7 +89,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
                             htmlFor={extra.id.toString()}
                             className={classes.extraPrice}
                         >
-                            {extra.price}
+                            {numberToPrice(extra.price)}
                         </label>
                     </li>
                 ))}
@@ -118,7 +119,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
                         htmlFor="childrenServingSize"
                         className={classes.extraPrice}
                     >
-                        {food.priceOfChildrenServingSize}
+                        {numberToPrice(food.priceOfChildrenServingSize!)}
                     </label>
                 </p>
             </div>
@@ -154,10 +155,10 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
             {hasExtras}
             {hasChildrenPortion}
             <div className={classes.packing}>
-                <p>Csomagolás: {food.packigingFee}</p>
+                <p>Csomagolás: {numberToPrice(food.packigingFee)}</p>
             </div>
             <div className={classes.subTotal}>
-                <p>Ár: {subTotal}</p>
+                <p>Ár: {numberToPrice(subTotal)}</p>
             </div>
             <div className={classes.buttons}>
                 <button onClick={onClose}>Mégsem</button>

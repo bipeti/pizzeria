@@ -1,3 +1,4 @@
+import { numberToPrice } from "../utils/formatNumber";
 import classes from "./FoodItem.module.css";
 import { Food } from "./Foods";
 import FoodVarieties from "./FoodVarieties";
@@ -10,31 +11,37 @@ type FoodItemProps = {
 
 const FoodItem = ({ food, onAddToCart }: FoodItemProps) => {
     const [selectedPrice, setSelectedPrice] = useState<String>();
+    const [incompleteChoice, setIncompleteChoice] = useState(false);
 
     let hasMorePrizes =
         food.varieties !== undefined && food.varieties.length > 0;
 
     const handleSelectedPrice = (selected: string) => {
         setSelectedPrice(selected);
+        setIncompleteChoice(false);
     };
 
     const addToCartHandler = () => {
         if (hasMorePrizes) {
             if (!selectedPrice) {
-                alert("Válaszd ki valamelyik tételt!");
+                setIncompleteChoice(true);
                 return;
             }
         }
         onAddToCart(food, Number(selectedPrice));
     };
+    let priceClass = `${classes.price}`;
+    if (incompleteChoice) {
+        priceClass = `${classes.priceinvalid}`;
+    }
 
     return (
-        <div className={classes.li}>
+        <div className={classes.outer}>
             <div className={classes.name}>
                 <h3>{food.name}</h3>
                 <p>{food.description}</p>
             </div>
-            <div className={classes.price}>
+            <div className={priceClass}>
                 {food.varieties !== undefined && food.varieties.length > 0 && (
                     // if there are more prizes, not just 1
                     <FoodVarieties
@@ -47,12 +54,12 @@ const FoodItem = ({ food, onAddToCart }: FoodItemProps) => {
                 {food.price && (
                     // if there is just 1 prize available
                     <div className={classes.price}>
-                        <p>{food.price} Ft</p>
+                        <p>{numberToPrice(food.price)}</p>
                     </div>
                 )}
             </div>
             <div className={classes.orderbutton}>
-                <button onClick={addToCartHandler}>KOS</button>
+                <img alt="cart" src="cart.png" onClick={addToCartHandler}></img>
             </div>
         </div>
     );

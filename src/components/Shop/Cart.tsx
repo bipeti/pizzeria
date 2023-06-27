@@ -3,6 +3,7 @@ import classes from "./Cart.module.css";
 import { useSelector } from "react-redux";
 import { CartState, cartActions } from "../../store/cart-slice";
 import { useDispatch } from "react-redux";
+import { numberToPrice } from "../utils/formatNumber";
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -70,15 +71,6 @@ const Cart = () => {
                                         )}
                                     />
                                     <img
-                                        alt="plus"
-                                        src="plus.png"
-                                        onClick={increaseItemInCartHandler.bind(
-                                            null,
-                                            item.id
-                                        )}
-                                    />
-                                    <p>{item.quantity}</p>
-                                    <img
                                         alt="minus"
                                         src="minus.png"
                                         onClick={decreaseItemInCartHandler.bind(
@@ -86,8 +78,17 @@ const Cart = () => {
                                             item.id
                                         )}
                                     />
+                                    <p>{item.quantity}</p>
+                                    <img
+                                        alt="plus"
+                                        src="plus.png"
+                                        onClick={increaseItemInCartHandler.bind(
+                                            null,
+                                            item.id
+                                        )}
+                                    />
                                 </div>
-                                <div>{item.price}</div>
+                                <div>{numberToPrice(item.price)}</div>
                             </div>
                             {item.extras !== undefined &&
                                 item.extras.length > 0 && (
@@ -112,11 +113,11 @@ const Cart = () => {
                 </ul>
                 <div className={classes.packing}>
                     <div>Csomagolás:</div>
-                    <div>{packingFee}</div>
+                    <div>{numberToPrice(packingFee)}</div>
                 </div>
                 <div className={classes.totalPrice}>
                     <div>Végösszeg:</div>
-                    <div>{totalPrice}</div>
+                    <div>{numberToPrice(totalPrice)}</div>
                 </div>
             </div>
         );

@@ -9,22 +9,34 @@
 }
 
 .modal {
+    /* display: block; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: fixed;
     top: 15vh;
     left: 5%;
     width: 90%;
+    max-height: 70vh;
     background-color: white;
     padding: 1rem;
     border-radius: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     z-index: 30;
     animation: slide-down 300ms ease-out forwards;
+    overflow-y: auto;
+}
+
+.contentWrapper {
+    flex: 1;
+    width: 100%;
+    overflow: auto;
 }
 
 @media (min-width: 768px) {
     .modal {
-        width: 40rem;
-        left: calc(50% - 20rem);
+        width: 70%;
+        left: 15%;
     }
 }
 

@@ -49,6 +49,26 @@ const DUMMY_PRODUCTS: Food[] = [
             { id: 3, name: "ananász", price: 150 },
             { id: 4, name: "gomba", price: 100 },
             { id: 5, name: "olivabogyó", price: 250 },
+            { id: 6, name: "sonka", price: 200 },
+            { id: 7, name: "szalámi", price: 180 },
+            { id: 8, name: "fűszeres kolbász", price: 220 },
+            { id: 9, name: "kukorica", price: 120 },
+            { id: 10, name: "olívaolaj", price: 100 },
+            { id: 11, name: "rozmaring", price: 50 },
+            { id: 12, name: "fokhagyma", price: 50 },
+            { id: 13, name: "jalapeno", price: 150 },
+            { id: 14, name: "olívabogyó töltelékkel", price: 300 },
+            { id: 15, name: "szárított paradicsom", price: 180 },
+            { id: 16, name: "parmezán sajt", price: 250 },
+            { id: 17, name: "rucola", price: 120 },
+            { id: 18, name: "paprika", price: 80 },
+            { id: 19, name: "kapor", price: 70 },
+            { id: 20, name: "mozzarella", price: 200 },
+            { id: 21, name: "feta sajt", price: 280 },
+            { id: 22, name: "szósz extra mennyiség", price: 50 },
+            { id: 23, name: "cheddar sajt", price: 240 },
+            { id: 24, name: "bazsalikom", price: 60 },
+            { id: 25, name: "sült hagyma", price: 100 },
         ],
         packigingFee: 100,
     },
@@ -181,7 +201,6 @@ const Foods = () => {
             const existingItem = cartItems.find(
                 (item) => item.foodId === food.id
             );
-            console.log(cartItems);
 
             if (existingItem) {
                 dispatch(
@@ -193,7 +212,7 @@ const Foods = () => {
                         id: 1, // it recalculated in cart-slice
                         foodId: food.id,
                         foodName: food.name,
-                        price: food.price!, // in this scenario (no modal) it has to have price
+                        price: food.price!, // in this scenario (no modal) it has to has price
                         chosenChildrenServingSize: false,
                         packingFee: food.packigingFee,
                         quantity: 1,
@@ -221,11 +240,14 @@ const Foods = () => {
                     {uniqueGroups.map((group) => (
                         <li key={group}>
                             <Collapsible title={group} isOpened={false}>
-                                <ul>
+                                <ul className={classes.foodList}>
                                     {DUMMY_PRODUCTS.filter(
                                         (food) => food.group === group
                                     ).map((food) => (
-                                        <li key={food.id}>
+                                        <li
+                                            key={food.id}
+                                            className={classes.elements}
+                                        >
                                             <FoodItem
                                                 food={food}
                                                 onAddToCart={addToCart}

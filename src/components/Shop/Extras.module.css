@@ -1,5 +1,6 @@
 .inner {
     padding: 1em 0;
+    column-count: 2;
 }
 
 .extraName {
@@ -26,4 +27,10 @@
     justify-content: flex-end;
     gap: 1em;
     margin-top: 1em;
+}
+
+@media (min-width: 1024px) {
+    .inner {
+        column-count: 3;
+    }
 }

@@ -1,5 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Details } from "../components/Shop/Foods";
+import { getTokenDuration, setTokenHours } from "../components/utils/token";
+
+const HOURS_TO_SAVE_CARTS_DATA = 2;
 
 type Items = {
     id: number;
@@ -22,7 +25,34 @@ export type CartState = {
     changed: boolean;
 };
 
-const initialState: CartState = {
+const getCartFromLocalStorage = (): CartState | null => {
+    const cartData = localStorage.getItem("cart");
+    const cartExpirationData = localStorage.getItem("cart-expiration");
+    if (!cartExpirationData || !cartData) {
+        return null;
+    }
+
+    if (getTokenDuration()! < 0) {
+        localStorage.removeItem("cart");
+        localStorage.removeItem("cart-expiration");
+        return null;
+    }
+    localStorage.setItem(
+        "cart-expiration",
+        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
+    );
+    return JSON.parse(cartData);
+};
+
+const saveCartToLocalStorage = (cartState: CartState) => {
+    localStorage.setItem("cart", JSON.stringify(cartState));
+    localStorage.setItem(
+        "cart-expiration",
+        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
+    );
+};
+
+const initialState: CartState = getCartFromLocalStorage() || {
     items: [],
     packingFee: 0,
     totalPrice: 0,
@@ -50,6 +80,7 @@ const cartSlice = createSlice({
             });
             state.packingFee += newItem.packingFee;
             state.totalPrice += newItem.price + newItem.packingFee;
+            saveCartToLocalStorage(state);
         },
         removeItemFromCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
@@ -61,6 +92,7 @@ const cartSlice = createSlice({
             state.packingFee -=
                 existingItem!.packingFee * existingItem!.quantity;
             state.items = state.items.filter((item) => item.id !== id);
+            saveCartToLocalStorage(state);
         },
         decreaseItemInCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
@@ -76,6 +108,7 @@ const cartSlice = createSlice({
                 state.packingFee -= existingItem!.packingFee;
                 state.totalPrice -= unitPrice + existingItem!.packingFee;
             }
+            saveCartToLocalStorage(state);
         },
         increaseItemInCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
@@ -86,6 +119,7 @@ const cartSlice = createSlice({
             existingItem!.price += unitPrice;
             state.packingFee += existingItem!.packingFee;
             state.totalPrice += unitPrice + existingItem!.packingFee;
+            saveCartToLocalStorage(state);
         },
     },
 });
