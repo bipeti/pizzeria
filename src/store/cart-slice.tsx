@@ -18,11 +18,10 @@ type Items = {
 };
 
 export type CartState = {
-    // type CartState = {
     items: Items[];
     packingFee: number;
     totalPrice: number;
-    changed: boolean;
+    // changed: boolean;
 };
 
 const getCartFromLocalStorage = (): CartState | null => {
@@ -56,7 +55,7 @@ const initialState: CartState = getCartFromLocalStorage() || {
     items: [],
     packingFee: 0,
     totalPrice: 0,
-    changed: false,
+    // changed: false,
 };
 
 const cartSlice = createSlice({
@@ -66,7 +65,7 @@ const cartSlice = createSlice({
         addItemToCart(state, action: PayloadAction<Items>) {
             const newItem = action.payload;
             const newId = state.items.length;
-            state.changed = true;
+            // state.changed = true;
             state.items.push({
                 id: newId,
                 foodId: newItem.foodId,
@@ -85,7 +84,7 @@ const cartSlice = createSlice({
         removeItemFromCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
-            state.changed = true;
+            // state.changed = true;
             state.totalPrice -=
                 existingItem!.price +
                 existingItem!.packingFee * existingItem!.quantity;
@@ -97,7 +96,7 @@ const cartSlice = createSlice({
         decreaseItemInCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
-            state.changed = true;
+            // state.changed = true;
 
             if (existingItem!.quantity === 1) {
                 cartSlice.caseReducers.removeItemFromCart(state, action);
@@ -113,7 +112,7 @@ const cartSlice = createSlice({
         increaseItemInCart(state, action: PayloadAction<{ id: number }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
-            state.changed = true;
+            // state.changed = true;
             const unitPrice = existingItem!.price / existingItem!.quantity;
             existingItem!.quantity += 1;
             existingItem!.price += unitPrice;

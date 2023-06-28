@@ -2,17 +2,153 @@
     display: none;
 }
 
+.content {
+    width: 100%;
+}
+
+.maincart img {
+    display: none;
+}
+
+.maincart .list {
+    text-align: left;
+    margin: 0.4em;
+}
+
+.maincart .list .element {
+    border-bottom: solid 1px lightgray;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.maincart .foodName {
+    font-weight: bold;
+}
+
+.maincart .smallbuttons {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+.maincart .smallbuttons img {
+    display: initial;
+    width: 16px;
+    height: 16px;
+    margin: 0 0.3em;
+    cursor: pointer;
+}
+.maincart .smallbuttons p {
+    margin: 0 0.3em;
+    display: inline;
+}
+
+.maincart .packing,
+.maincart .totalPrice {
+    margin: 0.5em 0.2em;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.maincart .totalPrice {
+    margin-bottom: 6em;
+}
+
+.maincart .extrasList {
+    display: inline;
+}
+
+.maincart .extrasList:after {
+    content: ", ";
+}
+
+.maincart .extrasList:last-child:after {
+    content: "";
+}
+
+.fullPageCart {
+    display: block !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    background-color: white;
+    overflow-y: auto;
+}
+
+.fullPageCart .close_img {
+    display: initial;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+}
+
 .subcart {
     display: flex;
-    justify-content: center;
+    flex-flow: row nowrap;
     width: 100%;
     height: 70px;
-    border: solid 1px red;
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    background-color: #ff4500;
     color: white;
     opacity: 95%;
+    text-align: center;
+    align-items: stretch;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.subcart .subInner {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.subcart img {
+    width: 32px;
+    margin-right: 0.5em;
+}
+
+.subcart .left {
+    background-color: #36b636;
+}
+
+.subcart .left .left_inner {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.arrow {
+    transition: transform 0.3s;
+    width: 32px;
+    height: 32px;
+    margin-left: 0.5em;
+}
+
+.cart_summarize {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    margin: auto;
+}
+
+.open {
+    transform: rotate(-180deg);
+}
+
+.subcart p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.subcart .right {
+    background-color: green;
 }
 
 @media (min-width: 769px) {
@@ -29,59 +165,19 @@
         /* z-index: 1; */
     }
 
+    .fullPageCart {
+        display: flex !important;
+        position: initial !important;
+        /* background-color: initial; */
+        overflow-y: auto;
+    }
+
+    .fullPageCart .close_img {
+        display: none;
+    }
+
     .content {
         width: 100%;
-    }
-
-    .maincart .list {
-        text-align: left;
-        margin: 0.4em;
-    }
-
-    .maincart .list .element {
-        border-bottom: solid 1px lightgray;
-        display: flex;
-        flex-flow: column nowrap;
-    }
-
-    .maincart .foodName {
-        font-weight: bold;
-    }
-
-    .maincart .smallbuttons {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-    }
-    .maincart .smallbuttons img {
-        width: 16px;
-        height: 16px;
-        margin: 0 0.3em;
-        cursor: pointer;
-    }
-    .maincart .smallbuttons p {
-        margin: 0 0.3em;
-        display: inline;
-    }
-
-    .maincart .packing,
-    .maincart .totalPrice {
-        margin: 0.5em 0.2em;
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-    }
-
-    .maincart .extrasList {
-        display: inline;
-    }
-
-    .maincart .extrasList:after {
-        content: ", ";
-    }
-
-    .maincart .extrasList:last-child:after {
-        content: "";
     }
 
     .subcart {

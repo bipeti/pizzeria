@@ -4,9 +4,11 @@ import { useSelector } from "react-redux";
 import { CartState, cartActions } from "../../store/cart-slice";
 import { useDispatch } from "react-redux";
 import { numberToPrice } from "../utils/formatNumber";
+import { useState } from "react";
 
 const Cart = () => {
     const dispatch = useDispatch();
+    const [isFullPageCart, setIsFullPageCart] = useState(false);
 
     let cart = <p>A kosarad üres.</p>;
     let bottomCart;
@@ -43,6 +45,15 @@ const Cart = () => {
             })
         );
     };
+
+    function showCartOnFullPage() {
+        // if (isFullPageCart) {
+        //     document.body.classList.remove("noScroll");
+        // } else {
+        //     document.body.classList.add("noScroll");
+        // }
+        setIsFullPageCart(!isFullPageCart);
+    }
 
     if (cartItems !== undefined && cartItems.length > 0) {
         cart = (
@@ -124,8 +135,30 @@ const Cart = () => {
 
         bottomCart = createPortal(
             <div className={classes.subcart}>
-                {cartItems.length} tétel a kosárban
-                {totalPrice}
+                <div
+                    className={`${classes.subInner} ${classes.left}`}
+                    onClick={showCartOnFullPage}
+                >
+                    <div className={classes.left_inner}>
+                        <img
+                            alt="arrow"
+                            src="arrow-down.png"
+                            className={`${classes.arrow} ${
+                                isFullPageCart ? "" : classes.open
+                            }`}
+                        ></img>
+                        <div className={classes.cart_summarize}>
+                            <p>{cartItems.length} tétel a kosárban</p>
+                            <p>
+                                <img alt="cart" src="cart.png" />
+                                {numberToPrice(totalPrice)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div className={`${classes.subInner} ${classes.right}`}>
+                    Megrendelés
+                </div>
             </div>,
             document.body
         );
@@ -133,8 +166,18 @@ const Cart = () => {
 
     return (
         <>
-            <div className={classes.maincart}>
+            <div
+                className={`${classes.maincart} ${
+                    isFullPageCart ? classes.fullPageCart : ""
+                }`}
+            >
                 <h3>Kosár</h3>
+                <img
+                    alt="close"
+                    className={classes.close_img}
+                    src="close.png"
+                    onClick={showCartOnFullPage}
+                />
                 {cart}
             </div>
             {bottomCart}
