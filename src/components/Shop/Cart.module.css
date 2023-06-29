@@ -2,7 +2,7 @@
     display: none;
 }
 
-.content {
+.maincart .content {
     width: 100%;
 }
 
@@ -84,6 +84,7 @@
     top: 20px;
     right: 20px;
     width: 24px;
+    cursor: pointer;
 }
 
 .subcart {
@@ -151,6 +152,12 @@
     background-color: green;
 }
 
+@media (min-width: 600px) {
+    .subcart {
+        width: calc(100% - 2em);
+    }
+}
+
 @media (min-width: 769px) {
     .maincart {
         display: flex;
@@ -162,13 +169,11 @@
         border: solid 1px red;
         top: 0;
         position: sticky;
-        /* z-index: 1; */
     }
 
     .fullPageCart {
         display: flex !important;
         position: initial !important;
-        /* background-color: initial; */
         overflow-y: auto;
     }
 

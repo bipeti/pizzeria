@@ -132,7 +132,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
 
         dispatch(
             cartActions.addItemToCart({
-                id: 1, // it recalculated in cart-slice
+                id: "", // it recalculated in cart-slice
                 foodId: food.id,
                 foodName: food.name,
                 price: subTotal - food.packigingFee,

@@ -5,7 +5,7 @@ import { getTokenDuration, setTokenHours } from "../components/utils/token";
 const HOURS_TO_SAVE_CARTS_DATA = 2;
 
 type Items = {
-    id: number;
+    id: string;
     foodId: number;
     foodName: string;
     varietyName?: string;
@@ -64,7 +64,7 @@ const cartSlice = createSlice({
     reducers: {
         addItemToCart(state, action: PayloadAction<Items>) {
             const newItem = action.payload;
-            const newId = state.items.length;
+            const newId = crypto.randomUUID();
             // state.changed = true;
             state.items.push({
                 id: newId,
@@ -81,7 +81,7 @@ const cartSlice = createSlice({
             state.totalPrice += newItem.price + newItem.packingFee;
             saveCartToLocalStorage(state);
         },
-        removeItemFromCart(state, action: PayloadAction<{ id: number }>) {
+        removeItemFromCart(state, action: PayloadAction<{ id: string }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
             // state.changed = true;
@@ -93,7 +93,7 @@ const cartSlice = createSlice({
             state.items = state.items.filter((item) => item.id !== id);
             saveCartToLocalStorage(state);
         },
-        decreaseItemInCart(state, action: PayloadAction<{ id: number }>) {
+        decreaseItemInCart(state, action: PayloadAction<{ id: string }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
             // state.changed = true;
@@ -109,7 +109,7 @@ const cartSlice = createSlice({
             }
             saveCartToLocalStorage(state);
         },
-        increaseItemInCart(state, action: PayloadAction<{ id: number }>) {
+        increaseItemInCart(state, action: PayloadAction<{ id: string }>) {
             const id = action.payload.id;
             const existingItem = state.items.find((item) => item.id === id);
             // state.changed = true;

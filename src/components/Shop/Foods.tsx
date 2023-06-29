@@ -209,7 +209,7 @@ const Foods = () => {
             } else {
                 dispatch(
                     cartActions.addItemToCart({
-                        id: 1, // it recalculated in cart-slice
+                        id: "", // it recalculated in cart-slice
                         foodId: food.id,
                         foodName: food.name,
                         price: food.price!, // in this scenario (no modal) it has to has price

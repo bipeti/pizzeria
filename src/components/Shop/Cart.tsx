@@ -22,7 +22,7 @@ const Cart = () => {
         (state: { cart: CartState }) => state.cart.totalPrice
     );
 
-    const removeFromCartHandler = (id: number) => {
+    const removeFromCartHandler = (id: string) => {
         dispatch(
             cartActions.removeItemFromCart({
                 id,
@@ -30,7 +30,7 @@ const Cart = () => {
         );
     };
 
-    const decreaseItemInCartHandler = (id: number) => {
+    const decreaseItemInCartHandler = (id: string) => {
         dispatch(
             cartActions.decreaseItemInCart({
                 id,
@@ -38,7 +38,7 @@ const Cart = () => {
         );
     };
 
-    const increaseItemInCartHandler = (id: number) => {
+    const increaseItemInCartHandler = (id: string) => {
         dispatch(
             cartActions.increaseItemInCart({
                 id,
@@ -47,11 +47,11 @@ const Cart = () => {
     };
 
     function showCartOnFullPage() {
-        // if (isFullPageCart) {
-        //     document.body.classList.remove("noScroll");
-        // } else {
-        //     document.body.classList.add("noScroll");
-        // }
+        if (isFullPageCart) {
+            document.body.classList.remove("noScroll");
+        } else {
+            document.body.classList.add("noScroll");
+        }
         setIsFullPageCart(!isFullPageCart);
     }
 
