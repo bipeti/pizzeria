@@ -1,0 +1,40 @@
+.outer {
+    display: flex;
+    flex-flow: row nowrap;
+    /* justify-content: space-between; */
+}
+
+.pizza img {
+    display: block;
+    max-width: 50vw;
+    /* max-height: 50vh; */
+    width: auto;
+    height: 80vh;
+}
+
+.content {
+    display: flex;
+    flex-flow: column nowrap;
+    text-align: center;
+}
+
+.content .title {
+    padding: 3em 0;
+    font-size: x-large;
+}
+
+.content .form {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.content .input {
+    background-color: lightblue;
+    margin: 0.2rem 0;
+    padding: 0 0.2rem;
+    border: none;
+    width: 20rem;
+    line-height: 3;
+    font-size: 1em;
+}

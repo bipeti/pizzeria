@@ -55,6 +55,23 @@ const Cart = () => {
         setIsFullPageCart(!isFullPageCart);
     }
 
+    const orderHandler = async () => {
+        await fetch(
+            "https://pizzeria-39338-default-rtdb.europe-west1.firebasedatabase.app/orders.json",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    orderedItems: cartItems,
+                    packingFee: packingFee,
+                    totalPrice: totalPrice,
+                    date: Date(),
+                    userData: "Peter",
+                }),
+            }
+        );
+        dispatch(cartActions.emptyCart());
+    };
+
     if (cartItems !== undefined && cartItems.length > 0) {
         cart = (
             <div className={classes.content}>
@@ -130,6 +147,9 @@ const Cart = () => {
                     <div>Végösszeg:</div>
                     <div>{numberToPrice(totalPrice)}</div>
                 </div>
+                <div className={classes.orderButton}>
+                    <button onClick={orderHandler}>Megrendelés</button>
+                </div>
             </div>
         );
 
@@ -156,7 +176,10 @@ const Cart = () => {
                         </div>
                     </div>
                 </div>
-                <div className={`${classes.subInner} ${classes.right}`}>
+                <div
+                    className={`${classes.subInner} ${classes.right}`}
+                    onClick={orderHandler}
+                >
                     Megrendelés
                 </div>
             </div>,

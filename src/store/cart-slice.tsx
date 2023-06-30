@@ -24,6 +24,10 @@ export type CartState = {
     // changed: boolean;
 };
 
+const removeCartTokens = () => {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("cart-expiration");
+};
 const getCartFromLocalStorage = (): CartState | null => {
     const cartData = localStorage.getItem("cart");
     const cartExpirationData = localStorage.getItem("cart-expiration");
@@ -32,8 +36,7 @@ const getCartFromLocalStorage = (): CartState | null => {
     }
 
     if (getTokenDuration()! < 0) {
-        localStorage.removeItem("cart");
-        localStorage.removeItem("cart-expiration");
+        removeCartTokens();
         return null;
     }
     localStorage.setItem(
@@ -119,6 +122,12 @@ const cartSlice = createSlice({
             state.packingFee += existingItem!.packingFee;
             state.totalPrice += unitPrice + existingItem!.packingFee;
             saveCartToLocalStorage(state);
+        },
+        emptyCart(state) {
+            state.items = [];
+            state.packingFee = 0;
+            state.totalPrice = 0;
+            removeCartTokens();
         },
     },
 });
