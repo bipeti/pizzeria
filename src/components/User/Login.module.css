@@ -1,13 +1,11 @@
 .outer {
     display: flex;
     flex-flow: row nowrap;
-    /* justify-content: space-between; */
 }
 
 .pizza img {
     display: block;
     max-width: 50vw;
-    /* max-height: 50vh; */
     width: auto;
     height: 80vh;
 }
