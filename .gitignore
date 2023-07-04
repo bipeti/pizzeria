@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# secure datas, keys
+/src/utils/myConsts.tsx

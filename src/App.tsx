@@ -6,6 +6,7 @@ import HomePage from "./components/Pages/HomePage";
 import FoodsPage from "./components/Pages/FoodsPage";
 import GaleryPage from "./components/Pages/GaleryPage";
 import ContactPage from "./components/Pages/ContactPage";
+import Activation from "./components/User/Activation";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
             { path: "foods", element: <FoodsPage /> },
             { path: "galery", element: <GaleryPage /> },
             { path: "contact", element: <ContactPage /> },
+            { path: "activation", element: <Activation /> },
             // { path: "products/:productId", element: <ProductDetailPage /> },
         ],
     },

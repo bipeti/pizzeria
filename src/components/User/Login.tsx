@@ -2,104 +2,103 @@ import { useEffect } from "react";
 import Modal from "../UI/Modal";
 import classes from "./Login.module.css";
 import { useForm, Resolver } from "react-hook-form";
-import emailjs from "@emailjs/browser";
+import {
+    PendingUserData,
+    UserData,
+    fetchPendingUserData,
+    fetchUserData,
+    removeUserFromPending,
+    sendPendingUserData,
+} from "../../store/user-actions";
 
-type FormValues = {
-    Email: string;
-    Password: string;
-    "First name": string;
-    "Last name": string;
-    "Mobile number": string;
-    "Postal Code": string;
-    City: string;
-    Street: string;
-    "Data protection": boolean;
-};
+interface FormValues extends UserData {
+    dataProtection: boolean;
+}
 
 const resolver: Resolver<FormValues> = async (values) => {
     const errors: Partial<
         Record<keyof FormValues, { type: string; message: string }>
     > = {};
 
-    if (!values.Email) {
-        errors.Email = {
+    if (!values.email) {
+        errors.email = {
             type: "required",
             message: "Az E-mail megadása kötelező",
         };
-    } else if (!values.Email.match(/^\S+@\S+$/i)) {
-        errors.Email = {
+    } else if (!values.email.match(/^\S+@\S+$/i)) {
+        errors.email = {
             type: "pattern",
             message: "Érvénytelen e-mail cím formátum",
         };
     }
 
-    if (!values.Password) {
-        errors.Password = {
+    if (!values.password) {
+        errors.password = {
             type: "required",
             message: "Jelszó megadása kötelező",
         };
-    } else if (!values.Password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)) {
-        errors.Password = {
+    } else if (!values.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)) {
+        errors.password = {
             type: "pattern",
             message:
                 "A jelszónak tartalmaznia kell legalább egy nagybetűt, egy kisbetűt és egy számot",
         };
     }
 
-    if (!values["First name"]) {
-        errors["First name"] = {
+    if (!values.firstName) {
+        errors.firstName = {
             type: "required",
             message: "Név megadása kötelező",
         };
     }
 
-    if (!values["Last name"]) {
-        errors["Last name"] = {
+    if (!values.lastName) {
+        errors.lastName = {
             type: "required",
             message: "Név megadása kötelező",
         };
     }
 
-    if (!values["Mobile number"]) {
-        errors["Mobile number"] = {
+    if (!values.mobile) {
+        errors.mobile = {
             type: "required",
             message: "Telefonszám megadása kötelező",
         };
-    } else if (values["Mobile number"].length < 10) {
-        errors["Mobile number"] = {
+    } else if (values.mobile.length < 10) {
+        errors.mobile = {
             type: "range",
             message: "A telefonszám legalább 10 karakterből áll",
         };
     }
 
-    if (!values["Postal Code"]) {
-        errors["Postal Code"] = {
+    if (!values.postalCode) {
+        errors.postalCode = {
             type: "required",
             message: "Irányítószám megadása kötelező",
         };
-    } else if (!values["Postal Code"].match(/^\d{4}$/)) {
-        errors["Postal Code"] = {
+    } else if (!values.postalCode.match(/^\d{4}$/)) {
+        errors.postalCode = {
             type: "pattern",
             message: "Az irányítószám négy számjegyből állhat",
         };
     }
 
-    if (!values.City) {
-        errors.City = {
+    if (!values.city) {
+        errors.city = {
             type: "required",
             message: "Település megadása kötelező",
         };
     }
 
-    if (!values.Street) {
-        errors.Street = {
+    if (!values.street) {
+        errors.street = {
             type: "required",
             message: "Közterület és házszám megadása kötelező",
         };
     }
 
-    if (!values["Data protection"]) {
-        errors["Data protection"] = {
+    if (!values.dataProtection) {
+        errors.dataProtection = {
             type: "required",
             message: "Az adatvédelmi nyilatkozat elfogadása kötelező.",
         };
@@ -151,86 +150,56 @@ const Login = ({ onClose }: { onClose: () => void }) => {
     } = useForm<FormValues>({ resolver });
 
     const newUserHandler = async (userData: FormValues) => {
-        const loadedUsers = [];
-        try {
-            const response = await fetch(
-                "https://pizzeria-39338-default-rtdb.europe-west1.firebasedatabase.app/users.json"
-            );
-            if (!response.ok) {
-                throw new Error("Something went wrong");
-            }
-            const data = await response.json();
-            for (const key in data) {
-                loadedUsers.push({
-                    email: data[key].email,
-                });
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        const loadedUsers = await fetchUserData();
+        console.log(loadedUsers);
 
         const emailExists = loadedUsers.find(
-            (user) => user.email === userData.Email
+            (user) => user.email === userData.email
         );
 
         if (emailExists) {
             console.log("Email already exists in the database");
             return;
         }
-
+        const loadedPendingUsers = await fetchPendingUserData();
+        console.log(loadedPendingUsers);
+        let myEntry:
+            | {
+                  key: string;
+                  data: PendingUserData;
+              }
+            | undefined = undefined;
+        for (const entry of loadedPendingUsers) {
+            if (entry.data.email === userData.email) {
+                myEntry = entry;
+            }
+        }
+        if (myEntry?.key !== undefined) {
+            // if this e-mail exists already in the pending database,
+            // remove that
+            removeUserFromPending(myEntry.key);
+        }
         const activationCode = crypto.randomUUID();
+        const sendPendingSuccess = await sendPendingUserData({
+            pendingUserData: userData,
+            activationCode,
+        });
+        if (!sendPendingSuccess) {
+            console.log("Adatbázisba rögzítés sikertelen.");
+            return; // if database operation is OK, only then send email
+        }
 
         let templateParams = {
-            firstName: userData["First name"],
-            email: userData.Email,
+            firstName: userData.firstName,
+            email: userData.email,
             token: activationCode,
         };
-
-        try {
-            const response = await fetch(
-                "https://pizzeria-39338-default-rtdb.europe-west1.firebasedatabase.app/pendingusers.json",
-                {
-                    method: "POST",
-                    body: JSON.stringify({
-                        email: userData.Email,
-                        password: userData.Password,
-                        firstName: userData["First name"],
-                        lastName: userData["Last name"],
-                        mobile: userData["Mobile number"],
-                        postalCode: userData["Postal Code"],
-                        city: userData.City,
-                        street: userData.Street,
-                        registrationDate: Date(),
-                        activationCode: activationCode,
-                    }),
-                }
-            );
-            const data = await response.json();
-
-            // if database operation is OK, then send email
-
-            if (true) {
-                emailjs
-                    .send(
-                        "service_5aopvtj",
-                        "template_tkqfwuh",
-                        templateParams,
-                        "spbia2xqnaePNp_0N"
-                    )
-                    .then(
-                        (result) => {
-                            console.log(result.text);
-                        },
-                        (error) => {
-                            console.log(error.text);
-                        }
-                    );
-                // the template contains the next actiation structure:
-                // http://localhost:3000/activation?email=test@gmail.com&token=de26d857-1cfa-4752-b63f-52dd216e4f05
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        // const emailSendSuccess = await emailSend(templateParams);
+        // if (!emailSendSuccess) {
+        //     console.log("E-mail küldés sikertelen.");
+        //     return;
+        // }
+        // console.log("email küldés eredménye: ", emailSendSuccess);
     };
 
     const onSubmit = (data: FormValues) => {
@@ -296,96 +265,103 @@ const Login = ({ onClose }: { onClose: () => void }) => {
                             className={classes.form}
                         >
                             <input
+                                defaultValue="ana@gm.hu"
                                 type="text"
                                 className={classes.input}
                                 placeholder="E-mail"
-                                {...register("Email")}
+                                {...register("email")}
                             />
-                            {errors?.Email && <p>{errors.Email.message}</p>}
+                            {errors?.email && <p>{errors.email.message}</p>}
 
                             <input
+                                defaultValue="Qwer1234"
                                 type="password"
                                 className={classes.input}
-                                placeholder="Password"
-                                {...register("Password", {
+                                placeholder="Jelszó"
+                                {...register("password", {
                                     required: true,
                                     min: 6,
                                 })}
                             />
-                            {errors?.Password && (
-                                <p>{errors.Password.message}</p>
+                            {errors?.password && (
+                                <p>{errors.password.message}</p>
                             )}
 
                             <input
+                                defaultValue="Kovács"
                                 type="text"
                                 className={classes.input}
                                 placeholder="Vezetéknév"
-                                {...register("Last name")}
+                                {...register("lastName")}
                             />
-                            {errors["Last name"] && (
-                                <p>{errors["Last name"].message}</p>
+                            {errors.lastName && (
+                                <p>{errors.lastName.message}</p>
                             )}
 
                             <input
+                                defaultValue="Géza"
                                 type="text"
                                 className={classes.input}
                                 placeholder="Keresztnév"
-                                {...register("First name")}
+                                {...register("firstName")}
                             />
-                            {errors["First name"] && (
-                                <p>{errors["First name"].message}</p>
+                            {errors.firstName && (
+                                <p>{errors.firstName.message}</p>
                             )}
 
                             <input
+                                defaultValue="06301234567"
                                 type="tel"
                                 className={classes.input}
                                 placeholder="Telefonszám"
-                                {...register("Mobile number")}
+                                {...register("mobile")}
                             />
-                            {errors["Mobile number"] && (
-                                <p>{errors["Mobile number"].message}</p>
-                            )}
+                            {errors.mobile && <p>{errors.mobile.message}</p>}
 
                             <input
+                                defaultValue="2600"
                                 type="text"
                                 className={classes.input}
                                 placeholder="Irányítószám"
-                                {...register("Postal Code")}
+                                {...register("postalCode")}
                             />
-                            {errors["Postal Code"] && (
-                                <p>{errors["Postal Code"].message}</p>
+                            {errors.postalCode && (
+                                <p>{errors.postalCode.message}</p>
                             )}
 
                             <input
+                                defaultValue="Vác"
                                 type="text"
                                 className={classes.input}
                                 placeholder="Település"
-                                {...register("City")}
+                                {...register("city")}
                             />
-                            {errors.City && <p>{errors.City.message}</p>}
+                            {errors.city && <p>{errors.city.message}</p>}
 
                             <input
+                                defaultValue="Petőfi u. 7."
                                 type="text"
                                 className={classes.input}
                                 placeholder="Közterület és házszám"
-                                {...register("Street")}
+                                {...register("street")}
                             />
-                            {errors.Street && <p>{errors.Street.message}</p>}
+                            {errors.street && <p>{errors.street.message}</p>}
 
                             <div>
                                 <input
+                                    checked
                                     type="checkbox"
                                     id="dataprotection"
                                     placeholder="Adatvédelmi irányelvek"
-                                    {...register("Data protection")}
+                                    {...register("dataProtection")}
                                 />
                                 <label htmlFor="dataprotection">
                                     Elolvastam és elfogadom az Adatvédelmi
                                     elveket és az ÁSZF-ben foglaltakat.
                                 </label>
                             </div>
-                            {errors["Data protection"] && (
-                                <p>{errors["Data protection"].message}</p>
+                            {errors.dataProtection && (
+                                <p>{errors.dataProtection.message}</p>
                             )}
 
                             <input type="submit" value="Regisztráció" />
