@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import classes from "./MainNavigation.module.css";
-import Login from "../User/Login";
+import User from "../User/User";
 
 const MainNavigation = () => {
     const [showLoginModal, setShowLoginModal] = useState(false);
@@ -15,7 +15,7 @@ const MainNavigation = () => {
 
     return (
         <>
-            {showLoginModal && <Login onClose={hideModalHandler} />}
+            {showLoginModal && <User onClose={hideModalHandler} />}
 
             <header className={classes.header}>
                 <nav>

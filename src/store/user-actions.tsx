@@ -81,6 +81,9 @@ export const fetchUserData = async () => {
             throw new Error("Something went wrong");
         }
         const data: Record<string, UserData> = await response.json();
+        if (!response.ok) {
+            throw new Error("Database reading error");
+        }
         const loadedUsers: UserData[] = Object.entries(data).map(
             ([key, data]) => data
             // We only need the data, not the keys.
