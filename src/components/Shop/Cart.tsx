@@ -5,6 +5,8 @@ import { CartState, cartActions } from "../../store/cart-slice";
 import { useDispatch } from "react-redux";
 import { numberToPrice } from "../utils/formatNumber";
 import { useState } from "react";
+import { sendOrderData } from "../../store/order-actions";
+import { getUserDataByToken } from "../../store/user-actions";
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -56,19 +58,24 @@ const Cart = () => {
     }
 
     const orderHandler = async () => {
-        await fetch(
-            "https://pizzeria-39338-default-rtdb.europe-west1.firebasedatabase.app/orders.json",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    orderedItems: cartItems,
-                    packingFee: packingFee,
-                    totalPrice: totalPrice,
-                    date: Date(),
-                    userData: "Peter",
-                }),
-            }
-        );
+        const user = await getUserDataByToken();
+        if (!user) {
+            console.log("Hibás token!");
+            return;
+        }
+        const { password, registrationDate, ...partialUserData } = user;
+
+        const sendOrderSuccess = await sendOrderData({
+            orderedItems: cartItems,
+            packingFee: packingFee,
+            totalPrice: totalPrice,
+            userData: partialUserData,
+        });
+
+        if (!sendOrderSuccess) {
+            console.log("Adatbázisba írás sikertelen.");
+            return;
+        }
         dispatch(cartActions.emptyCart());
     };
 

@@ -1,10 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Details } from "../components/Shop/Foods";
 import { getTokenDuration, setTokenHours } from "../components/utils/token";
+import { HOURS_TO_SAVE_CARTS_DATA } from "../components/utils/myConsts";
 
-const HOURS_TO_SAVE_CARTS_DATA = 2;
-
-type Items = {
+export type Items = {
     id: string;
     foodId: number;
     foodName: string;
@@ -28,6 +27,7 @@ const removeCartTokens = () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("cart-expiration");
 };
+
 const getCartFromLocalStorage = (): CartState | null => {
     const cartData = localStorage.getItem("cart");
     const cartExpirationData = localStorage.getItem("cart-expiration");
@@ -35,7 +35,7 @@ const getCartFromLocalStorage = (): CartState | null => {
         return null;
     }
 
-    if (getTokenDuration()! < 0) {
+    if (getTokenDuration("cart-expiration")! < 0) {
         removeCartTokens();
         return null;
     }

@@ -1,7 +1,8 @@
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
-import { fetchUserData } from "../../store/user-actions";
+import { userWithEmail } from "../../store/user-actions";
 import bcrypt from "bcryptjs";
+import { getUserToken, setUserToken } from "../utils/token";
 
 interface LoginFormValues {
     email: string;
@@ -46,19 +47,23 @@ const Login = () => {
     } = useForm<LoginFormValues>({ resolver });
 
     const loginUserHandler = async (userData: LoginFormValues) => {
-        const loadedUsers = await fetchUserData();
-        const userWithEmail = loadedUsers.find(
-            (user) => user.email === userData.email
-        );
-        if (!userWithEmail) {
+        const user = await userWithEmail(userData.email);
+        if (!user) {
             console.log("E-mail, vagy jelszó nem megfelelő.");
             return;
         }
-        if (!bcrypt.compareSync(userData.password, userWithEmail.password)) {
+        if (!bcrypt.compareSync(userData.password, user.password)) {
             console.log("E-mail, vagy jelszó nem megfelelő.");
             return;
         }
         console.log("ok");
+        const tokenPayload = {
+            email: user.email,
+            mobile: user.mobile,
+        };
+        setUserToken(tokenPayload);
+        const myUser = getUserToken();
+        console.log(myUser);
     };
 
     const onSubmit = (data: LoginFormValues) => {

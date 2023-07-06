@@ -4,11 +4,11 @@ import {
     PendingUserData,
     UserData,
     fetchPendingUserData,
-    fetchUserData,
     removeUserFromPending,
     sendPendingUserData,
+    userWithEmail,
 } from "../../store/user-actions";
-import bcrypt, { hash } from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { emailSend } from "../utils/emailSend";
 
 let salt = bcrypt.genSaltSync(10);
@@ -125,14 +125,9 @@ const Registration = () => {
     } = useForm<RegistrationFormValues>({ resolver });
 
     const newUserHandler = async (userData: RegistrationFormValues) => {
-        const loadedUsers = await fetchUserData();
-        console.log(loadedUsers);
+        const user = await userWithEmail(userData.email);
 
-        const emailExists = loadedUsers.find(
-            (user) => user.email === userData.email
-        );
-
-        if (emailExists) {
+        if (user) {
             console.log("Email already exists in the database");
             return;
         }

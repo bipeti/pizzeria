@@ -1,4 +1,5 @@
 import { DB_PATH } from "../components/utils/myConsts";
+import { getUserToken } from "../components/utils/token";
 
 export interface UserData {
     email: string;
@@ -127,4 +128,25 @@ export const sendPendingUserData = async ({
         console.log(error);
         return null;
     }
+};
+
+export const userWithEmail = async (email: string) => {
+    const loadedUsers = await fetchUserData();
+    const userWithEmail = loadedUsers.find((user) => user.email === email);
+    return userWithEmail;
+};
+
+export const getUserDataByToken = async () => {
+    const userToken = getUserToken();
+    if (!userToken) {
+        return false;
+    }
+    const user = await userWithEmail(userToken.email);
+    if (!user) {
+        return false;
+    }
+    if (user.mobile !== userToken.mobile) {
+        return false;
+    }
+    return user;
 };
