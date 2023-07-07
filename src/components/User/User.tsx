@@ -67,7 +67,7 @@ const User = ({ onClose }: { onClose: () => void }) => {
                     {/* the next div wrapper is better to stay here, because the openMode function needs its
                         className, etc.*/}
                     <div id="login" className={classes.tabcontent}>
-                        <Login />
+                        <Login onClose={onClose} />
                     </div>
                     <div id="registration" className={classes.tabcontent}>
                         <Registration />

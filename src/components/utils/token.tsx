@@ -20,6 +20,7 @@ export function setTokenHours(number: number) {
 type UserTokenPayload = {
     email: string;
     mobile: string;
+    firstName: string;
 };
 
 export function setUserToken(tokenPayload: UserTokenPayload) {
@@ -59,4 +60,16 @@ export function getUserToken() {
 export function removeUserTokens() {
     localStorage.removeItem("user");
     localStorage.removeItem("user-expiration");
+}
+
+export function userExpirationTokenValidation() {
+    // it is called frequently, so we don't perform database operation, just longer expiration
+    if (getTokenDuration("user-expiration")! < 0) {
+        removeUserTokens();
+        return null;
+    }
+    localStorage.setItem(
+        "user-expiration",
+        setTokenHours(HOURS_TO_SAVE_USERS_DATA).toString()
+    );
 }

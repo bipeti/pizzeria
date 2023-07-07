@@ -3,6 +3,8 @@ import classes from "./User.module.css";
 import { userWithEmail } from "../../store/user-actions";
 import bcrypt from "bcryptjs";
 import { getUserToken, setUserToken } from "../utils/token";
+import { useDispatch } from "react-redux";
+import { userActions } from "../../store/user-slice";
 
 interface LoginFormValues {
     email: string;
@@ -39,7 +41,9 @@ const resolver: Resolver<LoginFormValues> = async (values) => {
     };
 };
 
-const Login = () => {
+const Login = ({ onClose }: { onClose: () => void }) => {
+    const dispatch = useDispatch();
+
     const {
         register,
         handleSubmit,
@@ -60,10 +64,13 @@ const Login = () => {
         const tokenPayload = {
             email: user.email,
             mobile: user.mobile,
+            firstName: user.firstName,
         };
         setUserToken(tokenPayload);
         const myUser = getUserToken();
+        dispatch(userActions.login());
         console.log(myUser);
+        onClose();
     };
 
     const onSubmit = (data: LoginFormValues) => {
