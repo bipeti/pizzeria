@@ -54,7 +54,7 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
                     "A jelszónak tartalmaznia kell legalább egy nagybetűt, egy kisbetűt és egy számot",
             };
         } else if (values.password.length < 8) {
-            errors.mobile = {
+            errors.password = {
                 type: "range",
                 message: "A jelszónak legalább 8 karakterből kell állnia",
             };
@@ -145,7 +145,7 @@ const Registration = ({ userData }: { userData?: UserData }) => {
         }
         const loadedPendingUsers = await fetchPendingUserData();
         console.log(loadedPendingUsers);
-        let myEntry:
+        let entryInPendingUsers:
             | {
                   key: string;
                   data: PendingUserData;
@@ -153,13 +153,13 @@ const Registration = ({ userData }: { userData?: UserData }) => {
             | undefined = undefined;
         for (const entry of loadedPendingUsers) {
             if (entry.data.email === userData.email) {
-                myEntry = entry;
+                entryInPendingUsers = entry;
             }
         }
-        if (myEntry?.key !== undefined) {
+        if (entryInPendingUsers?.key !== undefined) {
             // if this e-mail exists already in the pending database,
             // remove that
-            removeUserFromPending(myEntry.key);
+            removeUserFromPending(entryInPendingUsers.key);
         }
         const activationCode = crypto.randomUUID();
         let hashedPassword = bcrypt.hashSync(userData.password, salt);

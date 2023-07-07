@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # secure datas, keys
-./src/components/utils/myConsts.tsx
-./src/components/utils/firebase.tsx
+/src/components/utils/myConsts.tsx
+/src/components/utils/firebase.tsx

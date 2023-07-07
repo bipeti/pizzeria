@@ -8,6 +8,7 @@ import Login from "./Login";
 import Registration from "./Registration";
 import { getUserToken } from "../utils/token";
 import { getUserDataByToken } from "../../store/user-actions";
+import NewPassword from "./NewPassword";
 
 function openMode(
     evt: React.MouseEvent<HTMLButtonElement> | null,
@@ -87,7 +88,7 @@ const User = ({ onClose }: { onClose: () => void }) => {
                     <Registration userData={userData} />
                 </div>
                 <div id="passwordModify" className={classes.tabcontent}>
-                    Hamarosan...
+                    <NewPassword />
                 </div>
                 <div id="orders" className={classes.tabcontent}>
                     <div>Fejlesztés alatt...</div>

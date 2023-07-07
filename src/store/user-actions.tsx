@@ -206,3 +206,29 @@ export const getUserDataByToken = async () => {
     }
     return user;
 };
+
+export const modifyUserPassword = async (email: string, password: string) => {
+    try {
+        const queryRef = query(
+            ref(db, "users"),
+            orderByChild("email"),
+            equalTo(email),
+            limitToFirst(1)
+        );
+
+        const snapshot = await get(queryRef);
+
+        if (snapshot.exists()) {
+            const key = Object.keys(snapshot.val())[0]; // There is only one matching record
+            await update(ref(db, `users/${key}`), { password: password });
+            console.log("User data modified successfully!");
+            return true;
+        } else {
+            console.error("No matching record found for the given email.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error modifying user data:", error);
+        return null;
+    }
+};
