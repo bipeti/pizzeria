@@ -1,9 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../UI/Modal";
 import classes from "./User.module.css";
 
+/* If the user is logged in, his profil is visible, else the login/registration page. */
+
 import Login from "./Login";
 import Registration from "./Registration";
+import { getUserToken } from "../utils/token";
+import { getUserDataByToken } from "../../store/user-actions";
 
 function openMode(
     evt: React.MouseEvent<HTMLButtonElement> | null,
@@ -30,7 +34,7 @@ function openMode(
     if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add(classes.active);
     } else {
-        const defaultTabLink = document.querySelector("#loginbutton");
+        const defaultTabLink = document.querySelector("#leftbutton");
         if (defaultTabLink) {
             defaultTabLink.classList.add(classes.active);
         }
@@ -38,9 +42,97 @@ function openMode(
 }
 
 const User = ({ onClose }: { onClose: () => void }) => {
+    const [tabButtons, setTabButtons] = useState<JSX.Element | null>(null);
+    const [tabContent, setTabContent] = useState<JSX.Element | null>(null);
+    const [defaultOpenMode, setDefaultOpenMode] = useState<string>("login");
+
+    async function filledUserData() {
+        const userData = await getUserDataByToken();
+
+        if (!userData) {
+            /* It means, the token was valid, but this user can't found in the database. 
+            at this point it can just because of sg database error, or external database 
+            operation. */
+            console.log("Kérem, jelentkezzen be újra!");
+            return;
+        }
+        console.log(userData);
+        setDefaultOpenMode("profileData");
+        setTabButtons(
+            <>
+                <button
+                    className={`${classes.tablinks} ${classes.active}`}
+                    onClick={(e) => openMode(e, "profileData")}
+                    id="leftbutton"
+                >
+                    Saját adatok
+                </button>
+                <button
+                    className={classes.tablinks}
+                    onClick={(e) => openMode(e, "passwordModify")}
+                >
+                    Jelszó módosítás
+                </button>
+                <button
+                    className={classes.tablinks}
+                    onClick={(e) => openMode(e, "orders")}
+                >
+                    Rendelések
+                </button>
+            </>
+        );
+        setTabContent(
+            <>
+                <div id="profileData" className={classes.tabcontent}>
+                    <Registration userData={userData} />
+                </div>
+                <div id="passwordModify" className={classes.tabcontent}>
+                    Hamarosan...
+                </div>
+                <div id="orders" className={classes.tabcontent}>
+                    <div>Fejlesztés alatt...</div>
+                </div>
+            </>
+        );
+    }
+
     useEffect(() => {
-        openMode(null, "login");
-    }, []);
+        if (!getUserToken()) {
+            setTabButtons(
+                <>
+                    <button
+                        className={`${classes.tablinks} ${classes.active}`}
+                        onClick={(e) => openMode(e, "login")}
+                        id="leftbutton"
+                    >
+                        Belépés
+                    </button>
+                    <button
+                        className={classes.tablinks}
+                        onClick={(e) => openMode(e, "registration")}
+                    >
+                        Regisztráció
+                    </button>
+                </>
+            );
+            setTabContent(
+                <>
+                    <div id="login" className={classes.tabcontent}>
+                        <Login onClose={onClose} />
+                    </div>
+                    <div id="registration" className={classes.tabcontent}>
+                        <Registration />
+                    </div>
+                </>
+            );
+        } else {
+            filledUserData();
+        }
+    }, [onClose]);
+
+    useEffect(() => {
+        openMode(null, defaultOpenMode);
+    }, [defaultOpenMode]);
 
     return (
         <Modal onClose={onClose}>
@@ -49,29 +141,10 @@ const User = ({ onClose }: { onClose: () => void }) => {
                     <img src="pizza.jpg" alt="pizza" />
                 </div>
                 <div className={classes.content}>
-                    <div className={classes.tab}>
-                        <button
-                            className={`${classes.tablinks} ${classes.active}`}
-                            onClick={(e) => openMode(e, "login")}
-                            id="loginbutton"
-                        >
-                            Belépés
-                        </button>
-                        <button
-                            className={classes.tablinks}
-                            onClick={(e) => openMode(e, "registration")}
-                        >
-                            Regisztráció
-                        </button>
-                    </div>
-                    {/* the next div wrapper is better to stay here, because the openMode function needs its
-                        className, etc.*/}
-                    <div id="login" className={classes.tabcontent}>
-                        <Login onClose={onClose} />
-                    </div>
-                    <div id="registration" className={classes.tabcontent}>
-                        <Registration />
-                    </div>
+                    <div className={classes.tab}>{tabButtons}</div>
+                    {/* the next div wrapper is better to stay here and don't move to the inner Component, 
+                        due to the openMode function needs its className, etc.*/}
+                    {tabContent}
                 </div>
             </div>
         </Modal>

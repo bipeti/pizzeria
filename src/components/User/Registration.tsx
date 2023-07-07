@@ -4,12 +4,15 @@ import {
     PendingUserData,
     UserData,
     fetchPendingUserData,
+    modifyUserData,
     removeUserFromPending,
     sendPendingUserData,
     userWithEmail,
 } from "../../store/user-actions";
 import bcrypt from "bcryptjs";
 import { emailSend } from "../utils/emailSend";
+import { getUserToken } from "../utils/token";
+import { useEffect } from "react";
 
 let salt = bcrypt.genSaltSync(10);
 
@@ -21,7 +24,11 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
     const errors: Partial<
         Record<keyof RegistrationFormValues, { type: string; message: string }>
     > = {};
+    let userLoggedIn = false;
 
+    if (getUserToken()) {
+        userLoggedIn = true;
+    }
     if (!values.email) {
         errors.email = {
             type: "required",
@@ -34,22 +41,31 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
         };
     }
 
-    if (!values.password) {
-        errors.password = {
-            type: "required",
-            message: "Jelszó megadása kötelező",
-        };
-    } else if (!values.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)) {
-        errors.password = {
-            type: "pattern",
-            message:
-                "A jelszónak tartalmaznia kell legalább egy nagybetűt, egy kisbetűt és egy számot",
-        };
-    } else if (values.password.length < 8) {
-        errors.mobile = {
-            type: "range",
-            message: "A jelszónak legalább 8 karakterből kell állnia",
-        };
+    if (!userLoggedIn) {
+        if (!values.password) {
+            errors.password = {
+                type: "required",
+                message: "Jelszó megadása kötelező",
+            };
+        } else if (!values.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)) {
+            errors.password = {
+                type: "pattern",
+                message:
+                    "A jelszónak tartalmaznia kell legalább egy nagybetűt, egy kisbetűt és egy számot",
+            };
+        } else if (values.password.length < 8) {
+            errors.mobile = {
+                type: "range",
+                message: "A jelszónak legalább 8 karakterből kell állnia",
+            };
+        }
+
+        if (!values.dataProtection) {
+            errors.dataProtection = {
+                type: "required",
+                message: "Az adatvédelmi nyilatkozat elfogadása kötelező.",
+            };
+        }
     }
 
     if (!values.firstName) {
@@ -104,25 +120,21 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
         };
     }
 
-    if (!values.dataProtection) {
-        errors.dataProtection = {
-            type: "required",
-            message: "Az adatvédelmi nyilatkozat elfogadása kötelező.",
-        };
-    }
-
     return {
         values,
         errors: Object.keys(errors).length === 0 ? {} : errors,
     };
 };
 
-const Registration = () => {
+const Registration = ({ userData }: { userData?: UserData }) => {
     const {
         register,
         handleSubmit,
         formState: { errors },
+        trigger,
+        setValue,
     } = useForm<RegistrationFormValues>({ resolver });
+    let userLoggedIn = !!userData;
 
     const newUserHandler = async (userData: RegistrationFormValues) => {
         const user = await userWithEmail(userData.email);
@@ -178,37 +190,60 @@ const Registration = () => {
         console.log("email küldés eredménye: ", emailSendSuccess);
     };
 
-    const onSubmit = (data: RegistrationFormValues) => {
-        newUserHandler(data);
+    const modifyUserHandler = async (userData: RegistrationFormValues) => {
+        console.log("mod", userData);
+        const modifyUserSuccess = await modifyUserData({ userData });
+        if (!modifyUserSuccess) {
+            console.log("Módosítás sikertelen.");
+        } else {
+            console.log("OK");
+        }
     };
 
+    const onSubmit = async (data: RegistrationFormValues) => {
+        if (!userLoggedIn) {
+            newUserHandler(data);
+        } else {
+            console.log(data.email);
+            modifyUserHandler(data);
+        }
+    };
+
+    useEffect(() => {
+        if (userData) {
+            setValue("email", userData?.email);
+            trigger("email");
+        }
+    }, [userData, setValue, trigger]);
     console.log(errors);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
             <input
-                defaultValue="ana@gm.hu"
+                defaultValue={userLoggedIn ? userData!.email : ""}
                 type="text"
                 className={classes.input}
                 placeholder="E-mail"
+                disabled={userLoggedIn}
                 {...register("email")}
             />
             {errors?.email && <p>{errors.email.message}</p>}
-
+            {!userLoggedIn && (
+                <>
+                    <input
+                        type="password"
+                        className={classes.input}
+                        placeholder="Jelszó"
+                        {...register("password", {
+                            required: true,
+                            min: 8,
+                        })}
+                    />
+                    {errors?.password && <p>{errors.password.message}</p>}
+                </>
+            )}
             <input
-                defaultValue="Qwer1234"
-                type="password"
-                className={classes.input}
-                placeholder="Jelszó"
-                {...register("password", {
-                    required: true,
-                    min: 8,
-                })}
-            />
-            {errors?.password && <p>{errors.password.message}</p>}
-
-            <input
-                defaultValue="Kovács"
+                defaultValue={userLoggedIn ? userData!.lastName : ""}
                 type="text"
                 className={classes.input}
                 placeholder="Vezetéknév"
@@ -217,7 +252,7 @@ const Registration = () => {
             {errors.lastName && <p>{errors.lastName.message}</p>}
 
             <input
-                defaultValue="Géza"
+                defaultValue={userLoggedIn ? userData!.firstName : ""}
                 type="text"
                 className={classes.input}
                 placeholder="Keresztnév"
@@ -226,7 +261,7 @@ const Registration = () => {
             {errors.firstName && <p>{errors.firstName.message}</p>}
 
             <input
-                defaultValue="06301234567"
+                defaultValue={userLoggedIn ? userData!.mobile : ""}
                 type="tel"
                 className={classes.input}
                 placeholder="Telefonszám"
@@ -235,7 +270,7 @@ const Registration = () => {
             {errors.mobile && <p>{errors.mobile.message}</p>}
 
             <input
-                defaultValue="2600"
+                defaultValue={userLoggedIn ? userData!.postalCode : ""}
                 type="text"
                 className={classes.input}
                 placeholder="Irányítószám"
@@ -244,7 +279,7 @@ const Registration = () => {
             {errors.postalCode && <p>{errors.postalCode.message}</p>}
 
             <input
-                defaultValue="Vác"
+                defaultValue={userLoggedIn ? userData!.city : ""}
                 type="text"
                 className={classes.input}
                 placeholder="Település"
@@ -253,7 +288,7 @@ const Registration = () => {
             {errors.city && <p>{errors.city.message}</p>}
 
             <input
-                defaultValue="Petőfi u. 7."
+                defaultValue={userLoggedIn ? userData!.street : ""}
                 type="text"
                 className={classes.input}
                 placeholder="Közterület és házszám"
@@ -261,22 +296,29 @@ const Registration = () => {
             />
             {errors.street && <p>{errors.street.message}</p>}
 
-            <div>
-                <input
-                    checked
-                    type="checkbox"
-                    id="dataprotection"
-                    placeholder="Adatvédelmi irányelvek"
-                    {...register("dataProtection")}
-                />
-                <label htmlFor="dataprotection">
-                    Elolvastam és elfogadom az Adatvédelmi elveket és az
-                    ÁSZF-ben foglaltakat.
-                </label>
-            </div>
-            {errors.dataProtection && <p>{errors.dataProtection.message}</p>}
+            {!userLoggedIn && (
+                <div>
+                    <input
+                        defaultChecked={false}
+                        type="checkbox"
+                        id="dataprotection"
+                        placeholder="Adatvédelmi irányelvek"
+                        {...register("dataProtection")}
+                    />
+                    <label htmlFor="dataprotection">
+                        Elolvastam és elfogadom az Adatvédelmi elveket és az
+                        ÁSZF-ben foglaltakat.
+                    </label>
+                    {errors.dataProtection && (
+                        <p>{errors.dataProtection.message}</p>
+                    )}
+                </div>
+            )}
 
-            <input type="submit" value="Regisztráció" />
+            <input
+                type="submit"
+                value={userLoggedIn ? "Adatok módosítása" : "Regisztráció"}
+            />
         </form>
     );
 };

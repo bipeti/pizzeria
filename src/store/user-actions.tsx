@@ -1,5 +1,15 @@
 import { DB_PATH } from "../components/utils/myConsts";
-import { getUserToken } from "../components/utils/token";
+import { getUserToken, setUserToken } from "../components/utils/token";
+import { db } from "../components/utils/firebase";
+import {
+    equalTo,
+    get,
+    limitToFirst,
+    orderByChild,
+    query,
+    ref,
+    update,
+} from "@firebase/database";
 
 export interface UserData {
     email: string;
@@ -59,6 +69,41 @@ export const sendUserData = async ({ userData }: { userData: UserData }) => {
     }
 };
 
+export const modifyUserData = async ({ userData }: { userData: UserData }) => {
+    const { email, ...updatedData } = userData;
+
+    try {
+        const queryRef = query(
+            ref(db, "users"),
+            orderByChild("email"),
+            equalTo(email),
+            limitToFirst(1)
+        );
+
+        const snapshot = await get(queryRef);
+
+        if (snapshot.exists()) {
+            const key = Object.keys(snapshot.val())[0]; // There is only one matching record
+            await update(ref(db, `users/${key}`), updatedData);
+            console.log("User data modified successfully!");
+            // Important! The token contains both the name and the number so it needs to recreate
+            // it after modification.
+            setUserToken({
+                email: email,
+                mobile: userData.mobile,
+                firstName: userData.firstName,
+            });
+            return true;
+        } else {
+            console.error("No matching record found for the given email.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error modifying user data:", error);
+        return null;
+    }
+};
+
 export const removeUserFromPending = async (key: string) => {
     try {
         const url = DB_PATH + `/pendingusers/${key}.json`;
@@ -104,17 +149,28 @@ export const sendPendingUserData = async ({
     activationCode: string;
 }) => {
     try {
+        const {
+            email,
+            password,
+            firstName,
+            lastName,
+            mobile,
+            postalCode,
+            city,
+            street,
+        } = pendingUserData;
+
         const response = await fetch(DB_PATH + "/pendingusers.json", {
             method: "POST",
             body: JSON.stringify({
-                email: pendingUserData.email,
-                password: pendingUserData.password,
-                firstName: pendingUserData.firstName,
-                lastName: pendingUserData.lastName,
-                mobile: pendingUserData.mobile,
-                postalCode: pendingUserData.postalCode,
-                city: pendingUserData.city,
-                street: pendingUserData.street,
+                email,
+                password,
+                firstName,
+                lastName,
+                mobile,
+                postalCode,
+                city,
+                street,
                 registrationDate: Date(),
                 activationCode: activationCode,
             }),

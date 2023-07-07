@@ -19,7 +19,6 @@ const router = createBrowserRouter([
             { path: "galery", element: <GaleryPage /> },
             { path: "contact", element: <ContactPage /> },
             { path: "activation", element: <Activation /> },
-            // { path: "products/:productId", element: <ProductDetailPage /> },
         ],
     },
 ]);

@@ -84,35 +84,26 @@ const MainNavigation = () => {
                                 Kapcsolat
                             </NavLink>
                         </li>
-                        {!isLoggedIn && (
+                        <li>
+                            <img
+                                alt="login"
+                                src="profile.png"
+                                onClick={showLoginModalHandler}
+                                title={
+                                    isLoggedIn
+                                        ? `Fiókom (${firstName})`
+                                        : "Belépés / Regisztráció"
+                                }
+                            />
+                        </li>
+                        {isLoggedIn && (
                             <li>
                                 <img
-                                    alt="login"
-                                    src="profile.png"
-                                    onClick={showLoginModalHandler}
+                                    alt="logout"
+                                    src="logout.png"
+                                    onClick={logoutHandler}
                                 />
                             </li>
-                        )}
-                        {isLoggedIn && (
-                            <>
-                                <li>
-                                    <NavLink
-                                        to="profil"
-                                        className={({ isActive }) =>
-                                            isActive ? classes.active : ""
-                                        }
-                                    >
-                                        Saját fiók ({firstName})
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <img
-                                        alt="logout"
-                                        src="logout.png"
-                                        onClick={logoutHandler}
-                                    />
-                                </li>
-                            </>
                         )}
                     </ul>
                 </nav>
