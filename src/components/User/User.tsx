@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import Modal from "../UI/Modal";
 import classes from "./User.module.css";
-
-/* If the user is logged in, his profil is visible, else the login/registration page. */
-
 import Login from "./Login";
 import Registration from "./Registration";
 import { getUserToken } from "../utils/token";
 import { getUserDataByToken } from "../../store/user-actions";
 import NewPassword from "./NewPassword";
+import UserModal from "./UserModal";
+
+/* If the user is logged in, his profil is visible, else the login/registration page. */
 
 function openMode(
     evt: React.MouseEvent<HTMLButtonElement> | null,
@@ -136,19 +135,14 @@ const User = ({ onClose }: { onClose: () => void }) => {
     }, [defaultOpenMode]);
 
     return (
-        <Modal onClose={onClose}>
-            <div className={classes.outer}>
-                <div className={classes.pizza}>
-                    <img src="pizza.jpg" alt="pizza" />
-                </div>
-                <div className={classes.content}>
-                    <div className={classes.tab}>{tabButtons}</div>
-                    {/* the next div wrapper is better to stay here and don't move to the inner Component, 
+        <UserModal onClose={onClose}>
+            <div className={classes.content}>
+                <div className={classes.tab}>{tabButtons}</div>
+                {/* the next div wrapper is better to stay here and don't move to the inner Component, 
                         due to the openMode function needs its className, etc.*/}
-                    {tabContent}
-                </div>
+                {tabContent}
             </div>
-        </Modal>
+        </UserModal>
     );
 };
 

@@ -6,8 +6,11 @@ import {
     get,
     limitToFirst,
     orderByChild,
+    push,
     query,
     ref,
+    remove,
+    set,
     update,
 } from "@firebase/database";
 
@@ -230,5 +233,77 @@ export const modifyUserPassword = async (email: string, password: string) => {
     } catch (error) {
         console.error("Error modifying user data:", error);
         return null;
+    }
+};
+
+export const sendLostPasswordData = async (email: string, token: string) => {
+    try {
+        const lostPasswordsRef = ref(db, "lostPasswords");
+        const newLostPasswordRef = push(lostPasswordsRef);
+
+        const newLostPasswordData = {
+            email,
+            token,
+        };
+
+        await set(newLostPasswordRef, newLostPasswordData);
+        console.log("New lost password record added successfully!");
+        return true;
+    } catch (error) {
+        console.error("Error adding new lost password record:", error);
+        return null;
+    }
+};
+
+export const getLostPasswordData = async (token: string) => {
+    try {
+        const queryRef = query(
+            ref(db, "lostPasswords"),
+            orderByChild("token"),
+            equalTo(token),
+            limitToFirst(1)
+        );
+
+        const snapshot = await get(queryRef);
+
+        if (snapshot.exists()) {
+            const lostPasswordData = snapshot.val();
+            const email: string =
+                lostPasswordData[Object.keys(lostPasswordData)[0]].email;
+            console.log("Email getting is successful!");
+            return email;
+        } else {
+            console.error("No matching record found for the given token.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error getting lost password's data:", error);
+        return null;
+    }
+};
+
+export const removeLostPasswordData = async (token: string) => {
+    try {
+        const queryRef = query(
+            ref(db, "lostPasswords"),
+            orderByChild("token"),
+            equalTo(token),
+            limitToFirst(1)
+        );
+
+        const snapshot = await get(queryRef);
+
+        if (snapshot.exists()) {
+            const lostPasswordKey = Object.keys(snapshot.val())[0];
+            await remove(ref(db, `lostPasswords/${lostPasswordKey}`));
+            console.log("Lost password data removed successfully!");
+            return true;
+        } else {
+            console.error("No matching record found for the given token.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error removing lost password data:", error);
+        return false;
     }
 };

@@ -13,6 +13,7 @@ import bcrypt from "bcryptjs";
 import { emailSend } from "../utils/emailSend";
 import { getUserToken } from "../utils/token";
 import { useEffect } from "react";
+import { MY_REGISTRATION_TEMPLATE_ID } from "../utils/myConsts";
 
 let salt = bcrypt.genSaltSync(10);
 
@@ -178,11 +179,17 @@ const Registration = ({ userData }: { userData?: UserData }) => {
         }
 
         let templateParams = {
+            // the template contains the next activation structure:
+            // http://localhost:3000/activation?email=test@gmail.com&token=de26d857-1cfa-4752-b63f-52dd216e4f05
+
             firstName: userData.firstName,
             email: userData.email,
             token: activationCode,
         };
-        const emailSendSuccess = await emailSend(templateParams);
+        const emailSendSuccess = await emailSend(
+            MY_REGISTRATION_TEMPLATE_ID,
+            templateParams
+        );
         if (!emailSendSuccess) {
             console.log("E-mail küldés sikertelen.");
             return;

@@ -1,8 +1,14 @@
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
 import bcrypt from "bcryptjs";
-import { modifyUserPassword } from "../../store/user-actions";
+import {
+    getLostPasswordData,
+    modifyUserPassword,
+    removeLostPasswordData,
+} from "../../store/user-actions";
 import { getUserToken } from "../utils/token";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface LoginFormValues {
     newPassword: string;
@@ -64,16 +70,46 @@ const NewPassword = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginFormValues>({ resolver });
+    const location = useLocation();
+    let userToken = getUserToken();
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get("token");
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!userToken && !token) {
+            console.log("nothing");
+            navigate("/");
+        }
+    }, [navigate, userToken, token]);
     const modifyPasswordHandler = async (passwordData: LoginFormValues) => {
         if (passwordData.newPassword !== passwordData.reNewPassword) {
             console.log("A két jelszó nem egyezik.");
             return;
         }
         let hashedPassword = bcrypt.hashSync(passwordData.newPassword, salt);
-        let token = getUserToken();
+        let relatedEmail: string;
+
+        if (!userToken) {
+            // forgotten password from out
+            if (!token) {
+                // nem az e-mail-ből jött.
+                //redirect
+                return;
+            }
+            let emailFromLostPassword = await getLostPasswordData(token);
+            if (!emailFromLostPassword) {
+                console.log("Nincs az adatbázisban ez a token.");
+                return;
+            }
+            relatedEmail = emailFromLostPassword;
+        } else {
+            // password modification from inside
+            relatedEmail = userToken.email;
+        }
+
         let modifySuccess = await modifyUserPassword(
-            token!.email,
+            relatedEmail,
             hashedPassword
         );
         if (!modifySuccess) {
@@ -81,6 +117,16 @@ const NewPassword = () => {
             return;
         }
         console.log("Jelszó módosítás sikeres!");
+        if (!userToken) {
+            const removeSuccess = removeLostPasswordData(token!);
+            if (!removeSuccess) {
+                console.log(
+                    "Jelszóvisszaállító token törlése az adatbázisból sikertelen."
+                );
+                return;
+            }
+            console.log("Jelszóvisszaállító token törlése sikeres.");
+        }
     };
 
     const onSubmit = (data: LoginFormValues) => {
@@ -88,30 +134,28 @@ const NewPassword = () => {
     };
 
     return (
-        <>
-            <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
-                <input
-                    id="newPassword"
-                    type="password"
-                    placeholder="Új jelszó"
-                    className={classes.input}
-                    {...register("newPassword")}
-                />
-                {errors?.newPassword && <p>{errors.newPassword.message}</p>}
-                <input
-                    id="reNewPassword"
-                    type="password"
-                    placeholder="Új jelszó még egyszer"
-                    className={classes.input}
-                    {...register("reNewPassword")}
-                />
-                {errors?.reNewPassword && <p>{errors.reNewPassword.message}</p>}
+        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+            <input
+                id="newPassword"
+                type="password"
+                placeholder="Új jelszó"
+                className={classes.input}
+                {...register("newPassword")}
+            />
+            {errors?.newPassword && <p>{errors.newPassword.message}</p>}
+            <input
+                id="reNewPassword"
+                type="password"
+                placeholder="Új jelszó még egyszer"
+                className={classes.input}
+                {...register("reNewPassword")}
+            />
+            {errors?.reNewPassword && <p>{errors.reNewPassword.message}</p>}
 
-                <div className={classes.buttons}>
-                    <input type="submit" value="Módosítás"></input>
-                </div>
-            </form>
-        </>
+            <div className={classes.buttons}>
+                <input type="submit" value="Módosítás"></input>
+            </div>
+        </form>
     );
 };
 

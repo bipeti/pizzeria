@@ -14,11 +14,15 @@ const router = createBrowserRouter([
         element: <RootLayout />,
         // errorElement: <ErrorPage />,
         children: [
-            { index: true, element: <HomePage /> },
+            { index: true, element: <HomePage isPasswordReset={false} /> },
             { path: "foods", element: <FoodsPage /> },
             { path: "galery", element: <GaleryPage /> },
             { path: "contact", element: <ContactPage /> },
             { path: "activation", element: <Activation /> },
+            {
+                path: "passwordReset",
+                element: <HomePage isPasswordReset={true} />,
+            },
         ],
     },
 ]);

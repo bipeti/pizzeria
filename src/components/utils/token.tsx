@@ -1,5 +1,11 @@
 import { HOURS_TO_SAVE_USERS_DATA } from "./myConsts";
 
+type UserTokenPayload = {
+    email: string;
+    mobile: string;
+    firstName: string;
+};
+
 export function getTokenDuration(token: string) {
     const storedExpirationDate = localStorage.getItem(token);
     if (!storedExpirationDate) {
@@ -16,12 +22,6 @@ export function setTokenHours(number: number) {
     expiration.setHours(expiration.getHours() + number);
     return expiration;
 }
-
-type UserTokenPayload = {
-    email: string;
-    mobile: string;
-    firstName: string;
-};
 
 export function setUserToken(tokenPayload: UserTokenPayload) {
     const encodedPayload = btoa(JSON.stringify(tokenPayload));

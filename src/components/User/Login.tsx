@@ -1,10 +1,12 @@
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
-import { userWithEmail } from "../../store/user-actions";
+import { sendLostPasswordData, userWithEmail } from "../../store/user-actions";
 import bcrypt from "bcryptjs";
 import { getUserToken, setUserToken } from "../utils/token";
 import { useDispatch } from "react-redux";
 import { userActions } from "../../store/user-slice";
+import { emailSend } from "../utils/emailSend";
+import { MY_LOSTPASSWORD_TEMPLATE_ID } from "../utils/myConsts";
 
 interface LoginFormValues {
     email: string;
@@ -48,6 +50,7 @@ const Login = ({ onClose }: { onClose: () => void }) => {
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm<LoginFormValues>({ resolver });
 
     const loginUserHandler = async (userData: LoginFormValues) => {
@@ -77,6 +80,43 @@ const Login = ({ onClose }: { onClose: () => void }) => {
         loginUserHandler(data);
     };
 
+    const resetPasswordHandler = async () => {
+        const email = watch("email");
+        if (!email) {
+            console.log("Please give me your email.");
+            return;
+        }
+        let userData = await userWithEmail(email);
+        if (!userData) {
+            console.log("Felhasználó nem található.");
+            return;
+        }
+        const token = crypto.randomUUID();
+        let sendToDatabaseSuccess = await sendLostPasswordData(email, token);
+        if (!sendToDatabaseSuccess) {
+            console.log(
+                "A jelszó újraküldési token rögzítése során hiba lépett fel."
+            );
+            return;
+        }
+        let templateParams = {
+            // the template contains the next activation structure:
+            // http://localhost:3000/passwordReset?token=4d711b3c-ac83-4ee4-81e1-1f1da6133f6b
+            firstName: userData.firstName,
+            email: userData.email,
+            token,
+        };
+        const emailSendSuccess = await emailSend(
+            MY_LOSTPASSWORD_TEMPLATE_ID,
+            templateParams
+        );
+        if (!emailSendSuccess) {
+            console.log("E-mail küldés sikertelen.");
+            return;
+        }
+        console.log("Email küldés eredménye: ", emailSendSuccess);
+    };
+
     return (
         <>
             <p className={classes.information}>
@@ -101,9 +141,13 @@ const Login = ({ onClose }: { onClose: () => void }) => {
                 />
                 {errors?.password && <p>{errors.password.message}</p>}
 
-                <a href="/">Elfelejtett jelszó</a>
                 <div className={classes.buttons}>
-                    <input type="submit" value="Belépés"></input>
+                    <button type="button" onClick={resetPasswordHandler}>
+                        Elfelejtett jelszó
+                    </button>
+                    <button type="submit" value="submitInput">
+                        Belépés
+                    </button>
                 </div>
             </form>
         </>

@@ -1,5 +1,5 @@
 import emailjs from "@emailjs/browser";
-import { MY_PUBLIC_KEY, MY_SERVICE_ID, MY_TEMPLATE_ID } from "./myConsts";
+import { MY_PUBLIC_KEY, MY_SERVICE_ID } from "./myConsts";
 
 type emailSendProps = {
     firstName: string;
@@ -7,13 +7,14 @@ type emailSendProps = {
     token: string;
 };
 
-export const emailSend = async (templateParams: emailSendProps) => {
-    // the template contains the next activation structure:
-    // http://localhost:3000/activation?email=test@gmail.com&token=de26d857-1cfa-4752-b63f-52dd216e4f05
+export const emailSend = async (
+    templateid: string,
+    templateParams: emailSendProps
+) => {
     try {
         const response = await emailjs.send(
             MY_SERVICE_ID,
-            MY_TEMPLATE_ID,
+            templateid,
             templateParams,
             MY_PUBLIC_KEY
         );

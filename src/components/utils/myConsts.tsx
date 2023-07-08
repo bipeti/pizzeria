@@ -1,6 +1,7 @@
 /* emailjs.send constans */
 export const MY_SERVICE_ID = "service_5aopvtj";
-export const MY_TEMPLATE_ID = "template_tkqfwuh";
+export const MY_REGISTRATION_TEMPLATE_ID = "template_tkqfwuh";
+export const MY_LOSTPASSWORD_TEMPLATE_ID = "template_cy0csxc";
 export const MY_PUBLIC_KEY = "spbia2xqnaePNp_0N";
 
 /* database path  */
