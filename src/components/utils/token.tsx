@@ -1,4 +1,5 @@
-import { HOURS_TO_SAVE_USERS_DATA } from "./myConsts";
+import { CartState } from "../../store/cart-slice";
+import { HOURS_TO_SAVE_CARTS_DATA, HOURS_TO_SAVE_USERS_DATA } from "./myConsts";
 
 type UserTokenPayload = {
     email: string;
@@ -22,6 +23,42 @@ export function setTokenHours(number: number) {
     expiration.setHours(expiration.getHours() + number);
     return expiration;
 }
+
+export const removeCartTokens = () => {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("cart-expiration");
+};
+
+export const getCartFromLocalStorage = (): CartState | null => {
+    const cartData = localStorage.getItem("cart");
+    const cartExpirationData = localStorage.getItem("cart-expiration");
+    if (!cartExpirationData || !cartData) {
+        return null;
+    }
+
+    if (getTokenDuration("cart-expiration")! < 0) {
+        removeCartTokens();
+        return null;
+    }
+    localStorage.setItem(
+        "cart-expiration",
+        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
+    );
+    return JSON.parse(cartData);
+};
+
+export const saveCartToLocalStorage = (cartState: CartState) => {
+    localStorage.setItem("cart", JSON.stringify(cartState));
+    localStorage.setItem(
+        "cart-expiration",
+        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
+    );
+};
+
+export const onCartOperations = (cartState: CartState) => {
+    saveCartToLocalStorage(cartState);
+    userExpirationTokenValidation();
+};
 
 export function setUserToken(tokenPayload: UserTokenPayload) {
     const encodedPayload = btoa(JSON.stringify(tokenPayload));

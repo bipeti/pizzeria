@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Details } from "../components/Shop/Foods";
 import {
-    getTokenDuration,
-    setTokenHours,
+    getCartFromLocalStorage,
+    onCartOperations,
+    removeCartTokens,
     userExpirationTokenValidation,
 } from "../components/utils/token";
-import { HOURS_TO_SAVE_CARTS_DATA } from "../components/utils/myConsts";
 
 export type Items = {
     id: string;
@@ -25,42 +25,6 @@ export type CartState = {
     packingFee: number;
     totalPrice: number;
     // changed: boolean;
-};
-
-const removeCartTokens = () => {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("cart-expiration");
-};
-
-const getCartFromLocalStorage = (): CartState | null => {
-    const cartData = localStorage.getItem("cart");
-    const cartExpirationData = localStorage.getItem("cart-expiration");
-    if (!cartExpirationData || !cartData) {
-        return null;
-    }
-
-    if (getTokenDuration("cart-expiration")! < 0) {
-        removeCartTokens();
-        return null;
-    }
-    localStorage.setItem(
-        "cart-expiration",
-        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
-    );
-    return JSON.parse(cartData);
-};
-
-const saveCartToLocalStorage = (cartState: CartState) => {
-    localStorage.setItem("cart", JSON.stringify(cartState));
-    localStorage.setItem(
-        "cart-expiration",
-        setTokenHours(HOURS_TO_SAVE_CARTS_DATA).toString()
-    );
-};
-
-const onCartOperations = (cartState: CartState) => {
-    saveCartToLocalStorage(cartState);
-    userExpirationTokenValidation();
 };
 
 const initialState: CartState = getCartFromLocalStorage() || {
