@@ -14,24 +14,30 @@ const FeedbackModal = ({ onClose }: FeedbackModalProps) => {
     const orderMessage = useSelector(
         (state: { cart: CartState }) => state.cart.orderMessage
     );
+    const errorMessage = useSelector(
+        (state: { cart: CartState }) => state.cart.error
+    );
 
     return (
         <Modal onClose={onClose}>
-            {isLoading && (
-                <ThreeCircles
-                    height="100"
-                    width="100"
-                    color="#4fa94d"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                    visible={true}
-                    ariaLabel="three-circles-rotating"
-                    outerCircleColor="black"
-                    innerCircleColor="red"
-                    middleCircleColor="green"
-                />
-            )}
-            {orderMessage}
+            <div>
+                {isLoading && (
+                    <ThreeCircles
+                        height="100"
+                        width="100"
+                        color="#4fa94d"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                        ariaLabel="three-circles-rotating"
+                        outerCircleColor="black"
+                        innerCircleColor="red"
+                        middleCircleColor="green"
+                    />
+                )}
+            </div>
+            <div>{orderMessage}</div>
+            <div>{errorMessage}</div>
         </Modal>
     );
 };

@@ -86,7 +86,7 @@ const Cart = () => {
     };
 
     const feedbackCloseHandler = () => {
-        dispatch(cartActions.clearMessage());
+        dispatch(cartActions.clearMessages());
     };
 
     if (cartItems !== undefined && cartItems.length > 0) {

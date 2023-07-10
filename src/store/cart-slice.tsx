@@ -7,8 +7,9 @@ import {
     userExpirationTokenValidation,
 } from "../components/utils/token";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DB_PATH } from "../components/utils/myConsts";
 import { UserData } from "./user-actions";
+import { push, ref, set } from "@firebase/database";
+import { db } from "../components/utils/firebase";
 
 export type Items = {
     id: string;
@@ -69,40 +70,22 @@ type OrderData = {
     userData: PartialUserData;
 };
 
-// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export const sendOrderDataAsync = createAsyncThunk(
     "cart/sendOrderData",
     async ({ orderedItems, packingFee, totalPrice, userData }: OrderData) => {
         try {
-            // const startTime = Date.now();
-
-            const response = await fetch(DB_PATH + "/orders.json", {
-                method: "POST",
-                body: JSON.stringify({
-                    orderedItems: orderedItems,
-                    packingFee: packingFee,
-                    totalPrice: totalPrice,
-                    date: Date(),
-                    userData: userData,
-                }),
-            });
-            // const endTime = Date.now();
-            // const elapsedTime = endTime - startTime;
-
-            // if (elapsedTime < 1500) {
-            //     await delay(1500 - elapsedTime);
-            // }
-            if (!response.ok) {
-                throw new Error("Database writing error");
-            }
-            const responseData = {
-                status: response.status,
-                statusText: response.statusText,
+            const ordersRef = ref(db, "orders");
+            const newOrderRef = push(ordersRef);
+            const newOrderData = {
+                orderedItems,
+                packingFee,
+                totalPrice,
+                date: Date(),
+                userData,
             };
-            return responseData;
+            await set(newOrderRef, newOrderData);
         } catch (error) {
-            return error;
+            throw new Error("Database writing error");
         }
     }
 );
@@ -166,8 +149,9 @@ const cartSlice = createSlice({
             state.totalPrice += unitPrice + existingItem!.packingFee;
             onCartOperations(state);
         },
-        clearMessage(state) {
+        clearMessages(state) {
             state.orderMessage = undefined;
+            state.error = undefined;
         },
     },
     extraReducers: (builder) => {
@@ -178,12 +162,12 @@ const cartSlice = createSlice({
                     "A megrendelés rögzítése folyamatban van...";
             })
             .addCase(sendOrderDataAsync.fulfilled, (state) => {
+                removeCartTokens();
                 state.items = [];
                 state.packingFee = 0;
                 state.totalPrice = 0;
                 state.isLoading = false;
                 state.orderMessage = "A megrendelés rögzítése sikerült!";
-                removeCartTokens();
                 userExpirationTokenValidation();
             })
             .addCase(sendOrderDataAsync.rejected, (state, action) => {

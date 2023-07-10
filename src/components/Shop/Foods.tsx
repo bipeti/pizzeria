@@ -215,6 +215,8 @@ const Foods = () => {
                         price: food.price!, // in this scenario (no modal) it has to has price
                         chosenChildrenServingSize: false,
                         packingFee: food.packigingFee,
+                        varietyName: "",
+                        extras: [],
                         quantity: 1,
                     })
                 );
