@@ -1,15 +1,21 @@
 import { createPortal } from "react-dom";
 import classes from "./Cart.module.css";
 import { useSelector } from "react-redux";
-import { CartState, cartActions } from "../../store/cart-slice";
+import {
+    CartState,
+    cartActions,
+    sendOrderDataAsync,
+} from "../../store/cart-slice";
 import { useDispatch } from "react-redux";
 import { numberToPrice } from "../utils/formatNumber";
 import { useState } from "react";
-import { sendOrderData } from "../../store/order-actions";
 import { getUserDataByToken } from "../../store/user-actions";
+import { removeUserTokens } from "../utils/token";
+import { AppDispatch } from "../../store";
+import FeedbackModal from "../UI/FeedbackModal";
 
 const Cart = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const [isFullPageCart, setIsFullPageCart] = useState(false);
 
     let cart = <p>A kosarad üres.</p>;
@@ -22,6 +28,9 @@ const Cart = () => {
     );
     const totalPrice = useSelector(
         (state: { cart: CartState }) => state.cart.totalPrice
+    );
+    const orderMessage = useSelector(
+        (state: { cart: CartState }) => state.cart.orderMessage
     );
 
     const removeFromCartHandler = (id: string) => {
@@ -60,23 +69,24 @@ const Cart = () => {
     const orderHandler = async () => {
         const user = await getUserDataByToken();
         if (!user) {
-            console.log("Hibás token!");
+            console.log("There is some error with the token.");
+            removeUserTokens();
             return;
         }
         const { password, registrationDate, ...partialUserData } = user;
 
-        const sendOrderSuccess = await sendOrderData({
-            orderedItems: cartItems,
-            packingFee: packingFee,
-            totalPrice: totalPrice,
-            userData: partialUserData,
-        });
+        dispatch(
+            sendOrderDataAsync({
+                orderedItems: cartItems,
+                packingFee: packingFee,
+                totalPrice: totalPrice,
+                userData: partialUserData,
+            })
+        );
+    };
 
-        if (!sendOrderSuccess) {
-            console.log("Adatbázisba írás sikertelen.");
-            return;
-        }
-        dispatch(cartActions.emptyCart());
+    const feedbackCloseHandler = () => {
+        dispatch(cartActions.clearMessage());
     };
 
     if (cartItems !== undefined && cartItems.length > 0) {
@@ -196,6 +206,8 @@ const Cart = () => {
 
     return (
         <>
+            {orderMessage && <FeedbackModal onClose={feedbackCloseHandler} />}
+
             <div
                 className={`${classes.maincart} ${
                     isFullPageCart ? classes.fullPageCart : ""

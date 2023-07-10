@@ -1,4 +1,4 @@
-import { CartState } from "../../store/cart-slice";
+import { CartLocalStorage } from "../../store/cart-slice";
 import { HOURS_TO_SAVE_CARTS_DATA, HOURS_TO_SAVE_USERS_DATA } from "./myConsts";
 
 type UserTokenPayload = {
@@ -29,7 +29,7 @@ export const removeCartTokens = () => {
     localStorage.removeItem("cart-expiration");
 };
 
-export const getCartFromLocalStorage = (): CartState | null => {
+export const getCartFromLocalStorage = (): CartLocalStorage | null => {
     const cartData = localStorage.getItem("cart");
     const cartExpirationData = localStorage.getItem("cart-expiration");
     if (!cartExpirationData || !cartData) {
@@ -47,7 +47,7 @@ export const getCartFromLocalStorage = (): CartState | null => {
     return JSON.parse(cartData);
 };
 
-export const saveCartToLocalStorage = (cartState: CartState) => {
+export const saveCartToLocalStorage = (cartState: CartLocalStorage) => {
     localStorage.setItem("cart", JSON.stringify(cartState));
     localStorage.setItem(
         "cart-expiration",
@@ -55,7 +55,7 @@ export const saveCartToLocalStorage = (cartState: CartState) => {
     );
 };
 
-export const onCartOperations = (cartState: CartState) => {
+export const onCartOperations = (cartState: CartLocalStorage) => {
     saveCartToLocalStorage(cartState);
     userExpirationTokenValidation();
 };
@@ -100,7 +100,8 @@ export function removeUserTokens() {
 }
 
 export function userExpirationTokenValidation() {
-    // it is called frequently, so we don't perform database operation, just longer expiration
+    // it is called frequently, so we don't perform database operation,
+    // just longer expiration
     if (getTokenDuration("user-expiration")! < 0) {
         removeUserTokens();
         return null;
