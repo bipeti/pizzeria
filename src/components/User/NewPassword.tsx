@@ -1,14 +1,24 @@
+// This component is used for forgotten password and logged in users to modify
+// their password
+
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
 import bcrypt from "bcryptjs";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+    AuthState,
+    authActions,
+    modifyUserPassword,
+} from "../../store/auth-slice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { useSelector } from "react-redux";
+import FeedbackModal from "../UI/FeedbackModal";
 import {
     getLostPasswordData,
-    modifyUserPassword,
     removeLostPasswordData,
-} from "../../store/user-actions";
-import { getUserToken } from "../utils/token";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+} from "../../store/general-slice";
 
 interface LoginFormValues {
     newPassword: string;
@@ -71,61 +81,63 @@ const NewPassword = () => {
         formState: { errors },
     } = useForm<LoginFormValues>({ resolver });
     const location = useLocation();
-    let userToken = getUserToken();
     const urlParams = new URLSearchParams(location.search);
-    const token = urlParams.get("token");
+    const tokenInEmail = urlParams.get("token");
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+    const user = useSelector((state: { auth: AuthState }) => state.auth.user);
+    const authMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.message
+    );
+    const authErrorMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.error
+    );
+    const isLoading = useSelector(
+        (state: { auth: AuthState }) => state.auth.isLoading
+    );
+    const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
+    const [missingLostPasswordInDatabase, setMissingLostPasswordInDatabase] =
+        useState(false);
 
     useEffect(() => {
-        if (!userToken && !token) {
+        if (!user && !tokenInEmail) {
             console.log("nothing");
             navigate("/");
         }
-    }, [navigate, userToken, token]);
+    }, [navigate, user, tokenInEmail]);
+
     const modifyPasswordHandler = async (passwordData: LoginFormValues) => {
         if (passwordData.newPassword !== passwordData.reNewPassword) {
-            console.log("A két jelszó nem egyezik.");
+            setPasswordsDontMatch(true);
             return;
         }
         let hashedPassword = bcrypt.hashSync(passwordData.newPassword, salt);
         let relatedEmail: string;
 
-        if (!userToken) {
-            // forgotten password from out
-            if (!token) {
-                // nem az e-mail-ből jött.
-                //redirect
-                return;
-            }
-            let emailFromLostPassword = await getLostPasswordData(token);
+        if (!user) {
+            // forgotten password from outside
+            let emailFromLostPassword = await getLostPasswordData(
+                tokenInEmail!
+            );
             if (!emailFromLostPassword) {
-                console.log("Nincs az adatbázisban ez a token.");
+                setMissingLostPasswordInDatabase(true);
                 return;
             }
             relatedEmail = emailFromLostPassword;
         } else {
             // password modification from inside
-            relatedEmail = userToken.email;
+            relatedEmail = user.email;
         }
 
-        let modifySuccess = await modifyUserPassword(
-            relatedEmail,
-            hashedPassword
+        dispatch(
+            modifyUserPassword({
+                email: relatedEmail,
+                password: hashedPassword,
+            })
         );
-        if (!modifySuccess) {
-            console.log("Jelszó módosítás sikertelen!");
-            return;
-        }
-        console.log("Jelszó módosítás sikeres!");
-        if (!userToken) {
-            const removeSuccess = removeLostPasswordData(token!);
-            if (!removeSuccess) {
-                console.log(
-                    "Jelszóvisszaállító token törlése az adatbázisból sikertelen."
-                );
-                return;
-            }
-            console.log("Jelszóvisszaállító token törlése sikeres.");
+
+        if (!user) {
+            await removeLostPasswordData(tokenInEmail!);
         }
     };
 
@@ -133,29 +145,69 @@ const NewPassword = () => {
         modifyPasswordHandler(data);
     };
 
-    return (
-        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
-            <input
-                id="newPassword"
-                type="password"
-                placeholder="Új jelszó"
-                className={classes.input}
-                {...register("newPassword")}
-            />
-            {errors?.newPassword && <p>{errors.newPassword.message}</p>}
-            <input
-                id="reNewPassword"
-                type="password"
-                placeholder="Új jelszó még egyszer"
-                className={classes.input}
-                {...register("reNewPassword")}
-            />
-            {errors?.reNewPassword && <p>{errors.reNewPassword.message}</p>}
+    const feedbackCloseHandler = () => {
+        dispatch(authActions.clearMessages());
+    };
 
-            <div className={classes.buttons}>
-                <input type="submit" value="Módosítás"></input>
-            </div>
-        </form>
+    const passwordsDontMatchCloseHandler = () => {
+        setPasswordsDontMatch(false);
+    };
+
+    const missingLostPasswordHandler = () => {
+        setMissingLostPasswordInDatabase(false);
+    };
+
+    return (
+        <>
+            {authMessage && (
+                <FeedbackModal
+                    isLoading={isLoading}
+                    onClose={feedbackCloseHandler}
+                    message={authMessage}
+                    errorMessage={authErrorMessage}
+                />
+            )}
+            {passwordsDontMatch && (
+                <FeedbackModal
+                    onClose={passwordsDontMatchCloseHandler}
+                    message={"Jelszó módosítás nem sikerült!"}
+                    errorMessage={"A két jelszó nem egyezik!"}
+                />
+            )}
+            {missingLostPasswordInDatabase && (
+                <FeedbackModal
+                    onClose={missingLostPasswordHandler}
+                    message={
+                        "Kérem, hogy az e-mail-ben küldött aktiválás menetét kövesse!"
+                    }
+                    errorMessage={
+                        "Az aktiváló token nem található az adatbázisban."
+                    }
+                />
+            )}
+            <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+                <input
+                    id="newPassword"
+                    type="password"
+                    placeholder="Új jelszó"
+                    className={classes.input}
+                    {...register("newPassword")}
+                />
+                {errors?.newPassword && <p>{errors.newPassword.message}</p>}
+                <input
+                    id="reNewPassword"
+                    type="password"
+                    placeholder="Új jelszó még egyszer"
+                    className={classes.input}
+                    {...register("reNewPassword")}
+                />
+                {errors?.reNewPassword && <p>{errors.reNewPassword.message}</p>}
+
+                <div className={classes.buttons}>
+                    <input type="submit" value="Módosítás"></input>
+                </div>
+            </form>
+        </>
     );
 };
 

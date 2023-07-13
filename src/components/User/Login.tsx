@@ -1,12 +1,21 @@
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
-import { sendLostPasswordData, userWithEmail } from "../../store/user-actions";
-import bcrypt from "bcryptjs";
-import { getUserToken, setUserToken } from "../utils/token";
 import { useDispatch } from "react-redux";
-import { userActions } from "../../store/user-slice";
-import { emailSend } from "../utils/emailSend";
-import { MY_LOSTPASSWORD_TEMPLATE_ID } from "../utils/myConsts";
+import {
+    AuthState,
+    authActions,
+    getUserWithEmail,
+    loginHandler,
+} from "../../store/auth-slice";
+import { AppDispatch } from "../../store";
+import { useSelector } from "react-redux";
+import FeedbackModal from "../UI/FeedbackModal";
+import { useEffect, useState } from "react";
+import {
+    GeneralState,
+    generalActions,
+    sendLostPasswordData,
+} from "../../store/general-slice";
 
 interface LoginFormValues {
     email: string;
@@ -44,7 +53,27 @@ const resolver: Resolver<LoginFormValues> = async (values) => {
 };
 
 const Login = ({ onClose }: { onClose: () => void }) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+    const authMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.message
+    );
+    const authErrorMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.error
+    );
+    const isLoggedIn = useSelector(
+        (state: { auth: AuthState }) => state.auth.isLoggedIn
+    );
+    const generalMessage = useSelector(
+        (state: { general: GeneralState }) => state.general.message
+    );
+    const generalError = useSelector(
+        (state: { general: GeneralState }) => state.general.error
+    );
+    const generalIsLoading = useSelector(
+        (state: { general: GeneralState }) => state.general.isLoading
+    );
+    const [missingEmailInput, setMissingEmailInput] = useState(false);
+    const [noEmailInDatabase, setNoEmailInDatabase] = useState(false);
 
     const {
         register,
@@ -53,27 +82,19 @@ const Login = ({ onClose }: { onClose: () => void }) => {
         watch,
     } = useForm<LoginFormValues>({ resolver });
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            onClose();
+        }
+    }, [isLoggedIn, onClose]);
+
     const loginUserHandler = async (userData: LoginFormValues) => {
-        const user = await userWithEmail(userData.email);
-        if (!user) {
-            console.log("E-mail, vagy jelszó nem megfelelő.");
-            return;
-        }
-        if (!bcrypt.compareSync(userData.password, user.password)) {
-            console.log("E-mail, vagy jelszó nem megfelelő.");
-            return;
-        }
-        console.log("ok");
-        const tokenPayload = {
-            email: user.email,
-            mobile: user.mobile,
-            firstName: user.firstName,
-        };
-        setUserToken(tokenPayload);
-        const myUser = getUserToken();
-        dispatch(userActions.login());
-        console.log(myUser);
-        onClose();
+        dispatch(
+            loginHandler({
+                email: userData.email,
+                password: userData.password,
+            })
+        );
     };
 
     const onSubmit = (data: LoginFormValues) => {
@@ -83,42 +104,74 @@ const Login = ({ onClose }: { onClose: () => void }) => {
     const resetPasswordHandler = async () => {
         const email = watch("email");
         if (!email) {
-            console.log("Please give me your email.");
+            setMissingEmailInput(true);
             return;
         }
-        let userData = await userWithEmail(email);
+        const userData = await getUserWithEmail(email);
         if (!userData) {
-            console.log("Felhasználó nem található.");
+            setNoEmailInDatabase(true);
             return;
         }
         const token = crypto.randomUUID();
-        let sendToDatabaseSuccess = await sendLostPasswordData(email, token);
-        if (!sendToDatabaseSuccess) {
-            console.log(
-                "A jelszó újraküldési token rögzítése során hiba lépett fel."
-            );
-            return;
-        }
-        let templateParams = {
-            // the template contains the next activation structure:
-            // http://localhost:3000/passwordReset?token=4d711b3c-ac83-4ee4-81e1-1f1da6133f6b
-            firstName: userData.firstName,
-            email: userData.email,
-            token,
-        };
-        const emailSendSuccess = await emailSend(
-            MY_LOSTPASSWORD_TEMPLATE_ID,
-            templateParams
+        await dispatch(
+            sendLostPasswordData({
+                email,
+                token,
+                firstName: userData.firstName,
+            })
         );
-        if (!emailSendSuccess) {
-            console.log("E-mail küldés sikertelen.");
-            return;
-        }
-        console.log("Email küldés eredménye: ", emailSendSuccess);
+    };
+
+    const authFeedbackCloseHandler = () => {
+        dispatch(authActions.clearMessages());
+    };
+
+    const generalFeedbackCloseHandler = () => {
+        dispatch(generalActions.clearMessages());
+    };
+
+    const missingEmailInputCloseHandler = () => {
+        setMissingEmailInput(false);
+    };
+
+    const noEmailInDatabaseCloseHandler = () => {
+        setNoEmailInDatabase(false);
     };
 
     return (
         <>
+            {authMessage && (
+                <FeedbackModal
+                    onClose={authFeedbackCloseHandler}
+                    message={authMessage}
+                    errorMessage={authErrorMessage}
+                />
+            )}
+            {missingEmailInput && (
+                <FeedbackModal
+                    onClose={missingEmailInputCloseHandler}
+                    message={"Kérem, hogy először adja meg az e-mail címét!"}
+                    errorMessage={undefined}
+                />
+            )}
+            {noEmailInDatabase && (
+                <FeedbackModal
+                    onClose={noEmailInDatabaseCloseHandler}
+                    message={
+                        "A megadott e-mail cím nem szerepel az adatbázisban!"
+                    }
+                    errorMessage={undefined}
+                />
+            )}
+            {generalMessage && (
+                <FeedbackModal
+                    onClose={generalFeedbackCloseHandler}
+                    message={generalMessage}
+                    errorMessage={generalError}
+                    isLoading={generalIsLoading}
+                />
+            )}
+
             <p className={classes.information}>
                 A rendeléshez bejelentkezés szükséges. Ha még nem vagy tag,
                 kérjük regisztrálj!

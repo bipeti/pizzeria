@@ -1,21 +1,21 @@
+// This component is used for new users to registrate and existing users to modify
+// their data
+
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
-import {
-    PendingUserData,
-    UserData,
-    fetchPendingUserData,
-    modifyUserData,
-    removeUserFromPending,
-    sendPendingUserData,
-    userWithEmail,
-} from "../../store/user-actions";
-import bcrypt from "bcryptjs";
-import { emailSend } from "../utils/emailSend";
 import { getUserToken } from "../utils/token";
 import { useEffect } from "react";
-import { MY_REGISTRATION_TEMPLATE_ID } from "../utils/myConsts";
-
-let salt = bcrypt.genSaltSync(10);
+import { AuthState, authActions, modifyUserData } from "../../store/auth-slice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { useSelector } from "react-redux";
+import FeedbackModal from "../UI/FeedbackModal";
+import {
+    GeneralState,
+    UserData,
+    createNewUser,
+    generalActions,
+} from "../../store/general-slice";
 
 interface RegistrationFormValues extends UserData {
     dataProtection: boolean;
@@ -25,11 +25,8 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
     const errors: Partial<
         Record<keyof RegistrationFormValues, { type: string; message: string }>
     > = {};
-    let userLoggedIn = false;
+    let userLoggedIn = getUserToken() !== null;
 
-    if (getUserToken()) {
-        userLoggedIn = true;
-    }
     if (!values.email) {
         errors.email = {
             type: "required",
@@ -136,82 +133,40 @@ const Registration = ({ userData }: { userData?: UserData }) => {
         setValue,
     } = useForm<RegistrationFormValues>({ resolver });
     let userLoggedIn = !!userData;
+    const dispatch = useDispatch<AppDispatch>();
+
+    const authMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.message
+    );
+    const authErrorMessage = useSelector(
+        (state: { auth: AuthState }) => state.auth.error
+    );
+    const authIsLoading = useSelector(
+        (state: { auth: AuthState }) => state.auth.isLoading
+    );
+    const generalMessage = useSelector(
+        (state: { general: GeneralState }) => state.general.message
+    );
+    const generalErrorMessage = useSelector(
+        (state: { general: GeneralState }) => state.general.error
+    );
+    const generalIsLoading = useSelector(
+        (state: { general: GeneralState }) => state.general.isLoading
+    );
 
     const newUserHandler = async (userData: RegistrationFormValues) => {
-        const user = await userWithEmail(userData.email);
-
-        if (user) {
-            console.log("Email already exists in the database");
-            return;
-        }
-        const loadedPendingUsers = await fetchPendingUserData();
-        console.log(loadedPendingUsers);
-        let entryInPendingUsers:
-            | {
-                  key: string;
-                  data: PendingUserData;
-              }
-            | undefined = undefined;
-        for (const entry of loadedPendingUsers) {
-            if (entry.data.email === userData.email) {
-                entryInPendingUsers = entry;
-            }
-        }
-        if (entryInPendingUsers?.key !== undefined) {
-            // if this e-mail exists already in the pending database,
-            // remove that
-            removeUserFromPending(entryInPendingUsers.key);
-        }
-        const activationCode = crypto.randomUUID();
-        let hashedPassword = bcrypt.hashSync(userData.password, salt);
-        const modifiedUserData = { ...userData };
-        modifiedUserData.password = hashedPassword;
-        console.log(userData.password);
-        console.log(hashedPassword);
-
-        const sendPendingSuccess = await sendPendingUserData({
-            pendingUserData: modifiedUserData,
-            activationCode,
-        });
-        if (!sendPendingSuccess) {
-            console.log("Adatbázisba rögzítés sikertelen.");
-            return; // if database operation is OK, only then send email
-        }
-
-        let templateParams = {
-            // the template contains the next activation structure:
-            // http://localhost:3000/activation?email=test@gmail.com&token=de26d857-1cfa-4752-b63f-52dd216e4f05
-
-            firstName: userData.firstName,
-            email: userData.email,
-            token: activationCode,
-        };
-        const emailSendSuccess = await emailSend(
-            MY_REGISTRATION_TEMPLATE_ID,
-            templateParams
-        );
-        if (!emailSendSuccess) {
-            console.log("E-mail küldés sikertelen.");
-            return;
-        }
-        console.log("email küldés eredménye: ", emailSendSuccess);
+        dispatch(createNewUser({ userData }));
     };
 
     const modifyUserHandler = async (userData: RegistrationFormValues) => {
         console.log("mod", userData);
-        const modifyUserSuccess = await modifyUserData({ userData });
-        if (!modifyUserSuccess) {
-            console.log("Módosítás sikertelen.");
-        } else {
-            console.log("OK");
-        }
+        dispatch(modifyUserData({ userData }));
     };
 
     const onSubmit = async (data: RegistrationFormValues) => {
         if (!userLoggedIn) {
             newUserHandler(data);
         } else {
-            console.log(data.email);
             modifyUserHandler(data);
         }
     };
@@ -222,111 +177,136 @@ const Registration = ({ userData }: { userData?: UserData }) => {
             trigger("email");
         }
     }, [userData, setValue, trigger]);
-    console.log(errors);
+
+    const authFeedbackCloseHandler = () => {
+        dispatch(authActions.clearMessages());
+    };
+
+    const generalFeedbackCloseHandler = () => {
+        dispatch(generalActions.clearMessages());
+    };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-            <input
-                defaultValue={userLoggedIn ? userData!.email : ""}
-                type="text"
-                className={classes.input}
-                placeholder="E-mail"
-                disabled={userLoggedIn}
-                {...register("email")}
-            />
-            {errors?.email && <p>{errors.email.message}</p>}
-            {!userLoggedIn && (
-                <>
-                    <input
-                        type="password"
-                        className={classes.input}
-                        placeholder="Jelszó"
-                        {...register("password", {
-                            required: true,
-                            min: 8,
-                        })}
-                    />
-                    {errors?.password && <p>{errors.password.message}</p>}
-                </>
+        <>
+            {authMessage && (
+                <FeedbackModal
+                    isLoading={authIsLoading}
+                    onClose={authFeedbackCloseHandler}
+                    message={authMessage}
+                    errorMessage={authErrorMessage}
+                />
             )}
-            <input
-                defaultValue={userLoggedIn ? userData!.lastName : ""}
-                type="text"
-                className={classes.input}
-                placeholder="Vezetéknév"
-                {...register("lastName")}
-            />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
-
-            <input
-                defaultValue={userLoggedIn ? userData!.firstName : ""}
-                type="text"
-                className={classes.input}
-                placeholder="Keresztnév"
-                {...register("firstName")}
-            />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
-
-            <input
-                defaultValue={userLoggedIn ? userData!.mobile : ""}
-                type="tel"
-                className={classes.input}
-                placeholder="Telefonszám"
-                {...register("mobile")}
-            />
-            {errors.mobile && <p>{errors.mobile.message}</p>}
-
-            <input
-                defaultValue={userLoggedIn ? userData!.postalCode : ""}
-                type="text"
-                className={classes.input}
-                placeholder="Irányítószám"
-                {...register("postalCode")}
-            />
-            {errors.postalCode && <p>{errors.postalCode.message}</p>}
-
-            <input
-                defaultValue={userLoggedIn ? userData!.city : ""}
-                type="text"
-                className={classes.input}
-                placeholder="Település"
-                {...register("city")}
-            />
-            {errors.city && <p>{errors.city.message}</p>}
-
-            <input
-                defaultValue={userLoggedIn ? userData!.street : ""}
-                type="text"
-                className={classes.input}
-                placeholder="Közterület és házszám"
-                {...register("street")}
-            />
-            {errors.street && <p>{errors.street.message}</p>}
-
-            {!userLoggedIn && (
-                <div>
-                    <input
-                        defaultChecked={false}
-                        type="checkbox"
-                        id="dataprotection"
-                        placeholder="Adatvédelmi irányelvek"
-                        {...register("dataProtection")}
-                    />
-                    <label htmlFor="dataprotection">
-                        Elolvastam és elfogadom az Adatvédelmi elveket és az
-                        ÁSZF-ben foglaltakat.
-                    </label>
-                    {errors.dataProtection && (
-                        <p>{errors.dataProtection.message}</p>
-                    )}
-                </div>
+            {generalMessage && (
+                <FeedbackModal
+                    isLoading={generalIsLoading}
+                    onClose={generalFeedbackCloseHandler}
+                    message={generalMessage}
+                    errorMessage={generalErrorMessage}
+                />
             )}
+            <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+                <input
+                    defaultValue={userLoggedIn ? userData!.email : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="E-mail"
+                    disabled={userLoggedIn}
+                    {...register("email")}
+                />
+                {errors?.email && <p>{errors.email.message}</p>}
+                {!userLoggedIn && (
+                    <>
+                        <input
+                            type="password"
+                            className={classes.input}
+                            placeholder="Jelszó"
+                            {...register("password", {
+                                required: true,
+                                min: 8,
+                            })}
+                        />
+                        {errors?.password && <p>{errors.password.message}</p>}
+                    </>
+                )}
+                <input
+                    defaultValue={userLoggedIn ? userData!.lastName : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="Vezetéknév"
+                    {...register("lastName")}
+                />
+                {errors.lastName && <p>{errors.lastName.message}</p>}
 
-            <input
-                type="submit"
-                value={userLoggedIn ? "Adatok módosítása" : "Regisztráció"}
-            />
-        </form>
+                <input
+                    defaultValue={userLoggedIn ? userData!.firstName : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="Keresztnév"
+                    {...register("firstName")}
+                />
+                {errors.firstName && <p>{errors.firstName.message}</p>}
+
+                <input
+                    defaultValue={userLoggedIn ? userData!.mobile : ""}
+                    type="tel"
+                    className={classes.input}
+                    placeholder="Telefonszám"
+                    {...register("mobile")}
+                />
+                {errors.mobile && <p>{errors.mobile.message}</p>}
+
+                <input
+                    defaultValue={userLoggedIn ? userData!.postalCode : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="Irányítószám"
+                    {...register("postalCode")}
+                />
+                {errors.postalCode && <p>{errors.postalCode.message}</p>}
+
+                <input
+                    defaultValue={userLoggedIn ? userData!.city : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="Település"
+                    {...register("city")}
+                />
+                {errors.city && <p>{errors.city.message}</p>}
+
+                <input
+                    defaultValue={userLoggedIn ? userData!.street : ""}
+                    type="text"
+                    className={classes.input}
+                    placeholder="Közterület és házszám"
+                    {...register("street")}
+                />
+                {errors.street && <p>{errors.street.message}</p>}
+
+                {!userLoggedIn && (
+                    <div>
+                        <input
+                            defaultChecked={false}
+                            type="checkbox"
+                            id="dataprotection"
+                            placeholder="Adatvédelmi irányelvek"
+                            {...register("dataProtection")}
+                        />
+                        <label htmlFor="dataprotection">
+                            Elolvastam és elfogadom az Adatvédelmi elveket és az
+                            ÁSZF-ben foglaltakat.
+                        </label>
+                        {errors.dataProtection && (
+                            <p>{errors.dataProtection.message}</p>
+                        )}
+                    </div>
+                )}
+
+                <input
+                    type="submit"
+                    value={userLoggedIn ? "Adatok módosítása" : "Regisztráció"}
+                />
+            </form>
+        </>
     );
 };
 

@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import classes from "./User.module.css";
 import Login from "./Login";
 import Registration from "./Registration";
-import { getUserToken } from "../utils/token";
-import { getUserDataByToken } from "../../store/user-actions";
 import NewPassword from "./NewPassword";
 import UserModal from "./UserModal";
+import { useSelector } from "react-redux";
+import { AuthState } from "../../store/auth-slice";
 
 /* If the user is logged in, his profil is visible, else the login/registration page. */
 
@@ -45,59 +45,65 @@ const User = ({ onClose }: { onClose: () => void }) => {
     const [tabButtons, setTabButtons] = useState<JSX.Element | null>(null);
     const [tabContent, setTabContent] = useState<JSX.Element | null>(null);
     const [defaultOpenMode, setDefaultOpenMode] = useState<string>("login");
+    useState<string>("leftbutton");
 
-    async function filledUserData() {
-        const userData = await getUserDataByToken();
-
-        if (!userData) {
-            /* It means, the token was valid, but this user can't found in the database. 
-            at this point it can just because of sg database error, or external database 
-            operation. */
-            console.log("Kérem, jelentkezzen be újra!");
-            return;
-        }
-        console.log(userData);
-        setDefaultOpenMode("profileData");
-        setTabButtons(
-            <>
-                <button
-                    className={`${classes.tablinks} ${classes.active}`}
-                    onClick={(e) => openMode(e, "profileData")}
-                    id="leftbutton"
-                >
-                    Saját adatok
-                </button>
-                <button
-                    className={classes.tablinks}
-                    onClick={(e) => openMode(e, "passwordModify")}
-                >
-                    Jelszó módosítás
-                </button>
-                <button
-                    className={classes.tablinks}
-                    onClick={(e) => openMode(e, "orders")}
-                >
-                    Rendelések
-                </button>
-            </>
-        );
-        setTabContent(
-            <>
-                <div id="profileData" className={classes.tabcontent}>
-                    <Registration userData={userData} />
-                </div>
-                <div id="passwordModify" className={classes.tabcontent}>
-                    <NewPassword />
-                </div>
-                <div id="orders" className={classes.tabcontent}>
-                    <div>Fejlesztés alatt...</div>
-                </div>
-            </>
-        );
-    }
+    const userData = useSelector(
+        (state: { auth: AuthState }) => state.auth.user
+    );
+    const isLoggedIn = useSelector(
+        (state: { auth: AuthState }) => state.auth.isLoggedIn
+    );
 
     useEffect(() => {
-        if (!getUserToken()) {
+        async function filledUserData() {
+            if (!userData) {
+                /* It means, the token was valid, but this user can't found in the database. 
+                at this point it can just because of sg database error, or external database 
+                operation. */
+                console.log("Kérem, jelentkezzen be újra!");
+                return;
+            }
+            console.log(userData);
+            setDefaultOpenMode("profileData");
+            setTabButtons(
+                <>
+                    <button
+                        className={`${classes.tablinks} ${classes.active}`}
+                        onClick={(e) => openMode(e, "profileData")}
+                        id="leftbutton"
+                    >
+                        Saját adatok
+                    </button>
+                    <button
+                        className={classes.tablinks}
+                        onClick={(e) => openMode(e, "passwordModify")}
+                    >
+                        Jelszó módosítás
+                    </button>
+                    <button
+                        className={classes.tablinks}
+                        onClick={(e) => openMode(e, "orders")}
+                    >
+                        Rendelések
+                    </button>
+                </>
+            );
+            setTabContent(
+                <>
+                    <div id="profileData" className={classes.tabcontent}>
+                        <Registration userData={userData} />
+                    </div>
+                    <div id="passwordModify" className={classes.tabcontent}>
+                        <NewPassword />
+                    </div>
+                    <div id="orders" className={classes.tabcontent}>
+                        <div>Fejlesztés alatt...</div>
+                    </div>
+                </>
+            );
+        }
+
+        if (!isLoggedIn) {
             setTabButtons(
                 <>
                     <button
@@ -125,10 +131,12 @@ const User = ({ onClose }: { onClose: () => void }) => {
                     </div>
                 </>
             );
+            setDefaultOpenMode("login");
         } else {
             filledUserData();
+            setDefaultOpenMode("profileData");
         }
-    }, [onClose]);
+    }, [onClose, userData, isLoggedIn]);
 
     useEffect(() => {
         openMode(null, defaultOpenMode);

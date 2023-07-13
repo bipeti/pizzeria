@@ -27,10 +27,6 @@ export type Food = {
     packigingFee: number;
 };
 
-// type FoodsProps = {
-//     result: Food[];
-// };
-
 const DUMMY_PRODUCTS: Food[] = [
     {
         id: 1,

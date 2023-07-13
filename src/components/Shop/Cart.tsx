@@ -9,10 +9,10 @@ import {
 import { useDispatch } from "react-redux";
 import { numberToPrice } from "../utils/formatNumber";
 import { useState } from "react";
-import { getUserDataByToken } from "../../store/user-actions";
 import { removeUserTokens } from "../utils/token";
 import { AppDispatch } from "../../store";
 import FeedbackModal from "../UI/FeedbackModal";
+import { AuthState } from "../../store/auth-slice";
 
 const Cart = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -31,6 +31,15 @@ const Cart = () => {
     );
     const orderMessage = useSelector(
         (state: { cart: CartState }) => state.cart.orderMessage
+    );
+    const isLoading = useSelector(
+        (state: { cart: CartState }) => state.cart.isLoading
+    );
+    const errorMessage = useSelector(
+        (state: { cart: CartState }) => state.cart.error
+    );
+    const userData = useSelector(
+        (state: { auth: AuthState }) => state.auth.user
     );
 
     const removeFromCartHandler = (id: string) => {
@@ -67,13 +76,12 @@ const Cart = () => {
     }
 
     const orderHandler = async () => {
-        const user = await getUserDataByToken();
-        if (!user) {
+        if (!userData) {
             console.log("There is some error with the token.");
             removeUserTokens();
             return;
         }
-        const { password, registrationDate, ...partialUserData } = user;
+        const { password, registrationDate, ...partialUserData } = userData;
 
         dispatch(
             sendOrderDataAsync({
@@ -206,7 +214,14 @@ const Cart = () => {
 
     return (
         <>
-            {orderMessage && <FeedbackModal onClose={feedbackCloseHandler} />}
+            {orderMessage && (
+                <FeedbackModal
+                    onClose={feedbackCloseHandler}
+                    message={orderMessage}
+                    isLoading={isLoading}
+                    errorMessage={errorMessage}
+                />
+            )}
 
             <div
                 className={`${classes.maincart} ${

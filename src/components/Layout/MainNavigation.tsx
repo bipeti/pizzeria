@@ -1,18 +1,19 @@
 import { NavLink } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import classes from "./MainNavigation.module.css";
 import User from "../User/User";
 import { useSelector } from "react-redux";
-import { UserState, userActions } from "../../store/user-slice";
-import { getUserToken, removeUserTokens } from "../utils/token";
+import { AuthState, authActions } from "../../store/auth-slice";
 import { useDispatch } from "react-redux";
 
 const MainNavigation = () => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(
-        (state: { user: UserState }) => state.user.isLoggedIn
+        (state: { auth: AuthState }) => state.auth.isLoggedIn
     );
-    const [firstName, setFirstName] = useState<string | null>();
+    const firstName = useSelector(
+        (state: { auth: AuthState }) => state.auth.user?.firstName
+    );
 
     const [showLoginModal, setShowLoginModal] = useState(false);
     const hideModalHandler = () => {
@@ -23,18 +24,8 @@ const MainNavigation = () => {
         setShowLoginModal(true);
     };
 
-    useEffect(() => {
-        if (isLoggedIn) {
-            const userToken = getUserToken();
-            if (userToken) {
-                setFirstName(userToken.firstName);
-            }
-        }
-    }, [isLoggedIn]);
-
     const logoutHandler = () => {
-        removeUserTokens();
-        dispatch(userActions.logout());
+        dispatch(authActions.logout());
     };
 
     return (

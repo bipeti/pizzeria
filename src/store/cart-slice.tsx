@@ -7,9 +7,9 @@ import {
     userExpirationTokenValidation,
 } from "../components/utils/token";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UserData } from "./user-actions";
 import { push, ref, set } from "@firebase/database";
 import { db } from "../components/utils/firebase";
+import { UserData } from "./general-slice";
 
 export type Items = {
     id: string;

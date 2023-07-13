@@ -1,23 +1,19 @@
-import { useSelector } from "react-redux";
 import Modal from "./Modal";
-import { CartState } from "../../store/cart-slice";
 import { ThreeCircles } from "react-loader-spinner";
 
 type FeedbackModalProps = {
+    isLoading?: boolean;
+    message: string | undefined;
+    errorMessage: string | undefined;
     onClose: () => void;
 };
 
-const FeedbackModal = ({ onClose }: FeedbackModalProps) => {
-    const isLoading = useSelector(
-        (state: { cart: CartState }) => state.cart.isLoading
-    );
-    const orderMessage = useSelector(
-        (state: { cart: CartState }) => state.cart.orderMessage
-    );
-    const errorMessage = useSelector(
-        (state: { cart: CartState }) => state.cart.error
-    );
-
+const FeedbackModal = ({
+    isLoading,
+    message,
+    errorMessage,
+    onClose,
+}: FeedbackModalProps) => {
     return (
         <Modal onClose={onClose}>
             <div>
@@ -36,8 +32,8 @@ const FeedbackModal = ({ onClose }: FeedbackModalProps) => {
                     />
                 )}
             </div>
-            <div>{orderMessage}</div>
-            <div>{errorMessage}</div>
+            <div>{message}</div>
+            {errorMessage && <div>{errorMessage}</div>}
         </Modal>
     );
 };
