@@ -14,10 +14,14 @@ const MainNavigation = () => {
     const firstName = useSelector(
         (state: { auth: AuthState }) => state.auth.user?.firstName
     );
+    const goToLogin = useSelector(
+        (state: { auth: AuthState }) => state.auth.goToLogin
+    );
 
     const [showLoginModal, setShowLoginModal] = useState(false);
     const hideModalHandler = () => {
         setShowLoginModal(false);
+        dispatch(authActions.logout());
     };
 
     const showLoginModalHandler = () => {
@@ -30,7 +34,9 @@ const MainNavigation = () => {
 
     return (
         <>
-            {showLoginModal && <User onClose={hideModalHandler} />}
+            {(showLoginModal || goToLogin) && (
+                <User onClose={hideModalHandler} />
+            )}
 
             <header className={classes.header}>
                 <nav>

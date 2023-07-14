@@ -1,5 +1,5 @@
 // This file is a collection point for those functions, which don't belong to states. It is easier to manage their
-// different states uniformly. (pending, fulfilled, rejected).
+// different states uniformly. (pending, fulfilled, rejected). And it stores the belonging functions.
 
 import {
     push,
@@ -436,7 +436,7 @@ const generalSlice = createSlice({
             })
             .addCase(activateNewUser.fulfilled, (state) => {
                 state.message =
-                    "A felhasználó aktiválása sikerült! A fenti menüben tud bejelentkezni.";
+                    "A felhasználó aktiválása sikerült! Kérjük, hogy a bejelentkezéshez a fenti menüt használja!";
                 state.error = undefined;
                 state.isLoading = false;
             })

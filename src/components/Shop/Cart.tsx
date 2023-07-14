@@ -12,7 +12,7 @@ import { useState } from "react";
 import { removeUserTokens } from "../utils/token";
 import { AppDispatch } from "../../store";
 import FeedbackModal from "../UI/FeedbackModal";
-import { AuthState } from "../../store/auth-slice";
+import { AuthState, authActions } from "../../store/auth-slice";
 
 const Cart = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +41,9 @@ const Cart = () => {
     const userData = useSelector(
         (state: { auth: AuthState }) => state.auth.user
     );
+    // const goToLogin = useSelector(
+    //     (state: { auth: AuthState }) => state.auth.goToLogin
+    // );
 
     const removeFromCartHandler = (id: string) => {
         dispatch(
@@ -79,6 +82,7 @@ const Cart = () => {
         if (!userData) {
             console.log("There is some error with the token.");
             removeUserTokens();
+            dispatch(authActions.showLoginHandler());
             return;
         }
         const { password, registrationDate, ...partialUserData } = userData;

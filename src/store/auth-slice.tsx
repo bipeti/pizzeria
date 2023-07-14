@@ -31,6 +31,7 @@ type UserTokenPayload = {
 export interface AuthState {
     user: UserData | null;
     isLoggedIn: boolean;
+    goToLogin: boolean;
     accessToken: UserTokenPayload | null;
     expirationTime: string | null;
     error: undefined | string;
@@ -41,6 +42,7 @@ export interface AuthState {
 const initialState: AuthState = {
     user: null,
     isLoggedIn: false,
+    goToLogin: false,
     accessToken: null,
     expirationTime: null,
     error: undefined,
@@ -73,6 +75,7 @@ export const initializeAuthState = createAsyncThunk(
             return {
                 user,
                 isLoggedIn: userTokenInLocal !== null,
+                goToLogin: false,
                 accessToken: userTokenInLocal,
                 expirationTime: userExpTimeInLocal,
                 error: undefined,
@@ -195,12 +198,18 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        logout: (state) => {
+        logout: () => {
             removeUserTokens();
             return { ...initialState };
         },
         clearMessages: (state) => {
             return { ...state, error: undefined, message: undefined };
+        },
+        showLoginHandler: (state) => {
+            state.goToLogin = true;
+        },
+        hideLoginHandler: (state) => {
+            state.goToLogin = false;
         },
     },
     extraReducers: (builder) => {
