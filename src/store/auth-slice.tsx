@@ -105,7 +105,8 @@ export const fetchUserData = async () => {
         );
         return loadedUsers;
     } catch (error) {
-        return [];
+        // return [];
+        throw error;
     }
 };
 
@@ -121,14 +122,11 @@ export const getUserWithEmail = async (email: string) => {
 
 export const loginHandler = createAsyncThunk(
     "auth/loginHandler",
-    async (
-        { email, password }: { email: string; password: string },
-        { rejectWithValue }
-    ) => {
+    async ({ email, password }: { email: string; password: string }) => {
         try {
             const user = await getUserWithEmail(email);
+            console.log("user:", user);
             if (!user) {
-                // return rejectWithValue("E-mail, vagy jelszó nem megfelelő.");
                 throw new Error("E-mail, vagy jelszó nem megfelelő.");
             }
             if (!bcrypt.compareSync(password, user.password)) {
@@ -136,6 +134,12 @@ export const loginHandler = createAsyncThunk(
             }
             return user;
         } catch (error) {
+            if ((error as Error).message === "DATABASE_UNREACHABLE") {
+                throw new Error(
+                    "Database is currently unreachable. Please try again later."
+                );
+            }
+
             throw error;
         }
     }

@@ -1,12 +1,11 @@
 import Modal from "../UI/Modal";
-import { Food } from "./Foods";
 import { Collapsible } from "../Layout/Collapsible";
 import classes from "./Extras.module.css";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../../store/cart-slice";
-import { Details } from "../../components/Shop/Foods";
 import { numberToPrice } from "../utils/formatNumber";
+import { Details, Food } from "../../store/food-slice";
 
 type ExtrasProps = {
     food: Food;
@@ -37,7 +36,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
     }
     price = <h3>Alapár: {numberToPrice(myPrice)}</h3>;
 
-    const [subTotal, setSubTotal] = useState(myPrice + food.packigingFee);
+    const [subTotal, setSubTotal] = useState(myPrice + food.packagingFee);
 
     const extraHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { id, name, checked, value } = event.target;
@@ -135,9 +134,9 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
                 id: "", // it recalculated in cart-slice
                 foodId: food.id,
                 foodName: food.name,
-                price: subTotal - food.packigingFee,
+                price: subTotal - food.packagingFee,
                 chosenChildrenServingSize: selectedChildrenPortion,
-                packingFee: food.packigingFee,
+                packingFee: food.packagingFee,
                 quantity: 1,
                 extras: selectedExtras,
                 varietyName: myVarietyName,
@@ -155,7 +154,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
             {hasExtras}
             {hasChildrenPortion}
             <div className={classes.packing}>
-                <p>Csomagolás: {numberToPrice(food.packigingFee)}</p>
+                <p>Csomagolás: {numberToPrice(food.packagingFee)}</p>
             </div>
             <div className={classes.subTotal}>
                 <p>Ár: {numberToPrice(subTotal)}</p>

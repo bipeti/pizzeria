@@ -5,169 +5,44 @@ import Cart from "./Cart";
 import Extras from "./Extras";
 import FoodItem from "./FoodItem";
 import classes from "./Foods.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-export type Details = {
-    id: number;
-    name: string;
-    price: number;
-};
-
-export type Food = {
-    id: number;
-    name: string;
-    description: string; // e.g. ingredients
-    group: string; // pizzas, soup, etc.
-    price?: number;
-    hasChildrenServingSize: boolean;
-    priceOfChildrenServingSize?: number;
-    varieties?: Details[]; // e.g. different sizes of pizzas
-    extras?: Details[]; // e.g. topping to pizza, or bread to sg. that is choosable to this
-    packigingFee: number;
-};
-
-const DUMMY_PRODUCTS: Food[] = [
-    {
-        id: 1,
-        name: "Margaréta pizza",
-        description: "paradicsomszósz, paradicsom, bazsalikom, kevert sajt",
-        group: "Pizza",
-        hasChildrenServingSize: false,
-        varieties: [
-            { id: 1, name: "32 cm", price: 3440 },
-            { id: 2, name: "45 cm", price: 5250 },
-            { id: 3, name: "52 cm", price: 6550 },
-        ],
-        extras: [
-            { id: 1, name: "lila hagyma", price: 50 },
-            { id: 2, name: "paradicsom szeletek", price: 150 },
-            { id: 3, name: "ananász", price: 150 },
-            { id: 4, name: "gomba", price: 100 },
-            { id: 5, name: "olivabogyó", price: 250 },
-            { id: 6, name: "sonka", price: 200 },
-            { id: 7, name: "szalámi", price: 180 },
-            { id: 8, name: "fűszeres kolbász", price: 220 },
-            { id: 9, name: "kukorica", price: 120 },
-            { id: 10, name: "olívaolaj", price: 100 },
-            { id: 11, name: "rozmaring", price: 50 },
-            { id: 12, name: "fokhagyma", price: 50 },
-            { id: 13, name: "jalapeno", price: 150 },
-            { id: 14, name: "olívabogyó töltelékkel", price: 300 },
-            { id: 15, name: "szárított paradicsom", price: 180 },
-            { id: 16, name: "parmezán sajt", price: 250 },
-            { id: 17, name: "rucola", price: 120 },
-            { id: 18, name: "paprika", price: 80 },
-            { id: 19, name: "kapor", price: 70 },
-            { id: 20, name: "mozzarella", price: 200 },
-            { id: 21, name: "feta sajt", price: 280 },
-            { id: 22, name: "szósz extra mennyiség", price: 50 },
-            { id: 23, name: "cheddar sajt", price: 240 },
-            { id: 24, name: "bazsalikom", price: 60 },
-            { id: 25, name: "sült hagyma", price: 100 },
-        ],
-        packigingFee: 100,
-    },
-    {
-        id: 2,
-        name: "Dante pokla",
-        description:
-            "csípős paradicsomszósz, bacon, kolbász, csípős pepperoni paprika, hegyes erős, mozzarella sajt",
-        group: "Pizza",
-        hasChildrenServingSize: false,
-        varieties: [
-            { id: 1, name: "32 cm", price: 3440 },
-            { id: 2, name: "45 cm", price: 5250 },
-        ],
-        extras: [
-            { id: 1, name: "lila hagyma", price: 50 },
-            { id: 2, name: "paradicsom szeletek", price: 150 },
-            { id: 3, name: "ananász", price: 150 },
-            { id: 4, name: "gomba", price: 100 },
-            { id: 5, name: "olivabogyó", price: 250 },
-        ],
-        packigingFee: 100,
-    },
-    {
-        id: 3,
-        name: "Falusi tyúkhúsleves",
-        description: "leveshússal, vele főtt zöldségekkel és lúdgégetésztával",
-        group: "Leves",
-        price: 1580,
-        hasChildrenServingSize: true,
-        priceOfChildrenServingSize: 1100,
-        extras: [{ id: 1, name: "csipőspaprika", price: 250 }],
-        packigingFee: 200,
-    },
-    {
-        id: 4,
-        name: "Gulyásleves",
-        description: "marhából",
-        group: "Leves",
-        price: 1980,
-        hasChildrenServingSize: true,
-        priceOfChildrenServingSize: 1400,
-        extras: [
-            { id: 1, name: "csipőspaprika", price: 250 },
-            { id: 2, name: "kenyér szelet", price: 50 },
-        ],
-        packigingFee: 200,
-    },
-    {
-        id: 5,
-        name: "Paradicsomleves",
-        description: "marhából",
-        group: "Leves",
-        price: 1980,
-        hasChildrenServingSize: true,
-        priceOfChildrenServingSize: 1400,
-        extras: [
-            { id: 1, name: "csipőspaprika", price: 250 },
-            { id: 2, name: "kenyér szelet", price: 50 },
-        ],
-        packigingFee: 200,
-    },
-    {
-        id: 6,
-        name: "Fokhagymakrémleves",
-        description: "marhából",
-        group: "Leves",
-        price: 1980,
-        hasChildrenServingSize: true,
-        priceOfChildrenServingSize: 1400,
-        extras: [
-            { id: 1, name: "csipőspaprika", price: 250 },
-            { id: 2, name: "kenyér szelet", price: 50 },
-        ],
-        packigingFee: 200,
-    },
-    {
-        id: 7,
-        name: "Kőleves",
-        description: "Kő, víz és még amit találunk a kamrában",
-        group: "Leves",
-        price: 980,
-        hasChildrenServingSize: false,
-        packigingFee: 200,
-    },
-    {
-        id: 8,
-        name: "Tiramisu",
-        description: "Kávé, vanília fagyi, babapiskóta",
-        group: "Sütemény",
-        price: 780,
-        hasChildrenServingSize: true,
-        priceOfChildrenServingSize: 100,
-        packigingFee: 100,
-    },
-];
+import {
+    Food,
+    FoodState,
+    getFoodGroups,
+    getFoods,
+} from "../../store/food-slice";
+import { AppDispatch } from "../../store";
+import { ThreeCircles } from "react-loader-spinner";
+import { getSortedFoodsForGroup } from "../utils/sortFoods";
 
 const Foods = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const [showExtrasModal, setShowExtrasModal] = useState(false);
     const [foodWidthExtras, setFoodWidthExtras] = useState<Food | null>();
     const [priceId, setPriceId] = useState<number | undefined>();
+
+    const cartItems = useSelector(
+        (state: { cart: CartState }) => state.cart.items
+    );
+    const foodIsLoading = useSelector(
+        (state: { food: FoodState }) => state.food.isLoading
+    );
+    const foods = useSelector((state: { food: FoodState }) => state.food.items);
+    const foodGroups = useSelector(
+        (state: { food: FoodState }) => state.food.foodGroups
+    );
+
+    useEffect(() => {
+        if (foods.length > 1) {
+            // it doesn't need to load the database on every visit on /foods site.
+            return;
+        }
+        dispatch(getFoods());
+        dispatch(getFoodGroups());
+    }, [dispatch, foods.length]);
 
     const hideModalHandler = () => {
         setShowExtrasModal(false);
@@ -176,10 +51,6 @@ const Foods = () => {
     const showModalHandler = () => {
         setShowExtrasModal(true);
     };
-
-    const cartItems = useSelector(
-        (state: { cart: CartState }) => state.cart.items
-    );
 
     const addToCart = (food: Food, selectedPriceId: number | undefined) => {
         /* If there is any extra belonging to the food or there is 
@@ -210,7 +81,7 @@ const Foods = () => {
                         foodName: food.name,
                         price: food.price!, // in this scenario (no modal) it has to has price
                         chosenChildrenServingSize: false,
-                        packingFee: food.packigingFee,
+                        packingFee: food.packagingFee,
                         varietyName: "",
                         extras: [],
                         quantity: 1,
@@ -220,45 +91,73 @@ const Foods = () => {
         }
     };
 
-    const uniqueGroups = [
-        ...new Set(DUMMY_PRODUCTS.map((product) => product.group)),
-    ];
+    const uniqueGroups = [...new Set(foods.map((food) => food.group))];
+
+    const sortedFoodGroups = foodGroups
+        .filter((group) => uniqueGroups.includes(group.name))
+        .sort((a, b) => a.order - b.order);
+    // const sortedFoodGroupNames = sortedFoodGroups.map((group) => group.name);
 
     return (
         <>
-            {showExtrasModal && foodWidthExtras && (
-                <Extras
-                    onClose={hideModalHandler}
-                    food={foodWidthExtras}
-                    priceId={priceId}
-                />
+            {foodIsLoading && (
+                <div className={classes.spinner}>
+                    <ThreeCircles
+                        height="100"
+                        width="100"
+                        color="#4fa94d"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                        ariaLabel="three-circles-rotating"
+                        outerCircleColor="black"
+                        innerCircleColor="red"
+                        middleCircleColor="green"
+                    />
+                </div>
             )}
-            <div className={classes.outer}>
-                <ul className={classes.products}>
-                    {uniqueGroups.map((group) => (
-                        <li key={group}>
-                            <Collapsible title={group} isOpened={false}>
-                                <ul className={classes.foodList}>
-                                    {DUMMY_PRODUCTS.filter(
-                                        (food) => food.group === group
-                                    ).map((food) => (
-                                        <li
-                                            key={food.id}
-                                            className={classes.elements}
-                                        >
-                                            <FoodItem
-                                                food={food}
-                                                onAddToCart={addToCart}
-                                            />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </Collapsible>
-                        </li>
-                    ))}
-                </ul>
-                <Cart />
-            </div>
+            {!foodIsLoading && (
+                <>
+                    {showExtrasModal && foodWidthExtras && (
+                        <Extras
+                            onClose={hideModalHandler}
+                            food={foodWidthExtras}
+                            priceId={priceId}
+                        />
+                    )}
+                    <div className={classes.outer}>
+                        <ul className={classes.products}>
+                            {sortedFoodGroups.map((group) => (
+                                <li key={group.id}>
+                                    <Collapsible
+                                        title={group.name}
+                                        isOpened={false}
+                                        image={group.imageURL}
+                                    >
+                                        <ul className={classes.foodList}>
+                                            {getSortedFoodsForGroup(
+                                                foods,
+                                                group.name
+                                            ).map((food) => (
+                                                <li
+                                                    key={food.id}
+                                                    className={classes.elements}
+                                                >
+                                                    <FoodItem
+                                                        food={food}
+                                                        onAddToCart={addToCart}
+                                                    />
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </Collapsible>
+                                </li>
+                            ))}
+                        </ul>
+                        <Cart />
+                    </div>
+                </>
+            )}
         </>
     );
 };

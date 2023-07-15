@@ -3,13 +3,31 @@
 }
 
 .group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: rgb(182, 175, 175);
     border-top: solid rgb(48, 47, 47) 1px;
     text-align: left;
     padding: 0.5rem;
     cursor: pointer;
+}
+
+.group-left {
     display: flex;
-    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.group-image-container {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.group-image {
+    padding-right: 10px;
+    height: 32px;
 }
 
 .ReactCollapse--content {
@@ -17,7 +35,7 @@
     background-color: white;
 }
 
-.arrow {
+.group-arrow {
     width: 0;
     height: 0;
     margin-top: 5px;

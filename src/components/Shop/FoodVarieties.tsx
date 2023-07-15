@@ -1,5 +1,6 @@
+import { Details } from "../../store/food-slice";
+import { numberToPrice } from "../utils/formatNumber";
 import classes from "./FoodVarieties.module.css";
-import { Details } from "./Foods";
 
 type FoodVarietiesProps = {
     foodId: number;
@@ -38,7 +39,8 @@ const FoodVarieties = ({
                         htmlFor={"food" + foodId + "detail" + detail.id}
                         className={classes.detailPrice}
                     >
-                        {detail.price} {" Ft"} <br></br>
+                        {numberToPrice(detail.price)}
+                        <br></br>
                     </label>
                 </li>
             ))}

@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Details } from "../components/Shop/Foods";
 import {
     getCartFromLocalStorage,
     onCartOperations,
@@ -10,6 +9,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { push, ref, set } from "@firebase/database";
 import { db } from "../components/utils/firebase";
 import { UserData } from "./general-slice";
+import { Details } from "./food-slice";
 
 export type Items = {
     id: string;

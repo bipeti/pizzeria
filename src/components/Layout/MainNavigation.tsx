@@ -21,7 +21,7 @@ const MainNavigation = () => {
     const [showLoginModal, setShowLoginModal] = useState(false);
     const hideModalHandler = () => {
         setShowLoginModal(false);
-        dispatch(authActions.logout());
+        dispatch(authActions.hideLoginHandler());
     };
 
     const showLoginModalHandler = () => {

@@ -1,6 +1,6 @@
+import { Food } from "../../store/food-slice";
 import { numberToPrice } from "../utils/formatNumber";
 import classes from "./FoodItem.module.css";
-import { Food } from "./Foods";
 import FoodVarieties from "./FoodVarieties";
 import { useState } from "react";
 

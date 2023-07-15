@@ -5,12 +5,14 @@ import "./Collapsible.css"; // It needs to have given names of classes and don't
 interface CollapsibleProps extends React.PropsWithChildren {
     title: string;
     isOpened: boolean;
+    image?: string;
 }
 
 export const Collapsible = ({
     title,
     children,
     isOpened,
+    image,
 }: CollapsibleProps) => {
     const [isOpen, setIsOpen] = useState(isOpened);
 
@@ -24,8 +26,19 @@ export const Collapsible = ({
                 onClick={handleToggle}
                 className={`group ${isOpen ? "open" : ""}`}
             >
-                {title}
-                <div className="arrow"></div>
+                <div className="group-left">
+                    <div className="group-image-container">
+                        {image && (
+                            <img
+                                alt="groupimage"
+                                src={image}
+                                className="group-image"
+                            />
+                        )}
+                    </div>
+                    <div>{title}</div>
+                </div>
+                <div className="group-arrow"></div>
             </div>
             <Collapse isOpened={isOpen}>{children}</Collapse>
         </>
