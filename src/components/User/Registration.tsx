@@ -30,7 +30,7 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
     if (!values.email) {
         errors.email = {
             type: "required",
-            message: "Az E-mail megadása kötelező",
+            message: "E-mail megadása kötelező",
         };
     } else if (!values.email.match(/^\S+@\S+$/i)) {
         errors.email = {
@@ -114,7 +114,7 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
     if (!values.street) {
         errors.street = {
             type: "required",
-            message: "Közterület és házszám megadása kötelező",
+            message: "A mező kitöltése kötelező",
         };
     }
 
@@ -187,7 +187,7 @@ const Registration = ({ userData }: { userData?: UserData }) => {
     };
 
     return (
-        <>
+        <div className={classes["content-wrapper"]}>
             {authMessage && (
                 <FeedbackModal
                     isLoading={authIsLoading}
@@ -205,108 +205,195 @@ const Registration = ({ userData }: { userData?: UserData }) => {
                 />
             )}
             <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-                <input
-                    defaultValue={userLoggedIn ? userData!.email : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="E-mail"
-                    disabled={userLoggedIn}
-                    {...register("email")}
-                />
-                {errors?.email && <p>{errors.email.message}</p>}
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="email">E-mail</label>
+                        <input
+                            defaultValue={userLoggedIn ? userData!.email : ""}
+                            id="email"
+                            type="text"
+                            className={classes.input}
+                            disabled={userLoggedIn}
+                            {...register("email")}
+                            aria-invalid={errors.email ? "true" : "false"}
+                        />
+                    </div>
+                    {errors?.email && (
+                        <p className={classes.error}>{errors.email.message}</p>
+                    )}
+                </div>
                 {!userLoggedIn && (
                     <>
-                        <input
-                            type="password"
-                            className={classes.input}
-                            placeholder="Jelszó"
-                            {...register("password", {
-                                required: true,
-                                min: 8,
-                            })}
-                        />
-                        {errors?.password && <p>{errors.password.message}</p>}
+                        <div className={classes["error-wrapper"]}>
+                            <div className={classes["input-wrapper"]}>
+                                <label htmlFor="password">Jelszó</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    className={classes.input}
+                                    {...register("password", {
+                                        required: true,
+                                        min: 8,
+                                    })}
+                                    aria-invalid={
+                                        errors.password ? "true" : "false"
+                                    }
+                                />
+                            </div>
+                            {errors?.password && (
+                                <p className={classes.error}>
+                                    {errors.password.message}
+                                </p>
+                            )}
+                        </div>
                     </>
                 )}
-                <input
-                    defaultValue={userLoggedIn ? userData!.lastName : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="Vezetéknév"
-                    {...register("lastName")}
-                />
-                {errors.lastName && <p>{errors.lastName.message}</p>}
-
-                <input
-                    defaultValue={userLoggedIn ? userData!.firstName : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="Keresztnév"
-                    {...register("firstName")}
-                />
-                {errors.firstName && <p>{errors.firstName.message}</p>}
-
-                <input
-                    defaultValue={userLoggedIn ? userData!.mobile : ""}
-                    type="tel"
-                    className={classes.input}
-                    placeholder="Telefonszám"
-                    {...register("mobile")}
-                />
-                {errors.mobile && <p>{errors.mobile.message}</p>}
-
-                <input
-                    defaultValue={userLoggedIn ? userData!.postalCode : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="Irányítószám"
-                    {...register("postalCode")}
-                />
-                {errors.postalCode && <p>{errors.postalCode.message}</p>}
-
-                <input
-                    defaultValue={userLoggedIn ? userData!.city : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="Település"
-                    {...register("city")}
-                />
-                {errors.city && <p>{errors.city.message}</p>}
-
-                <input
-                    defaultValue={userLoggedIn ? userData!.street : ""}
-                    type="text"
-                    className={classes.input}
-                    placeholder="Közterület és házszám"
-                    {...register("street")}
-                />
-                {errors.street && <p>{errors.street.message}</p>}
-
-                {!userLoggedIn && (
-                    <div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="lastName">Vezetéknév</label>
                         <input
-                            defaultChecked={false}
-                            type="checkbox"
-                            id="dataprotection"
-                            placeholder="Adatvédelmi irányelvek"
-                            {...register("dataProtection")}
+                            defaultValue={
+                                userLoggedIn ? userData!.lastName : ""
+                            }
+                            type="text"
+                            id="lastName"
+                            className={classes.input}
+                            {...register("lastName")}
+                            aria-invalid={errors.lastName ? "true" : "false"}
                         />
-                        <label htmlFor="dataprotection">
-                            Elolvastam és elfogadom az Adatvédelmi elveket és az
-                            ÁSZF-ben foglaltakat.
-                        </label>
+                    </div>
+                    {errors.lastName && (
+                        <p className={classes.error}>
+                            {errors.lastName.message}
+                        </p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="firstName">Keresztnév</label>
+                        <input
+                            defaultValue={
+                                userLoggedIn ? userData!.firstName : ""
+                            }
+                            type="text"
+                            id="firstName"
+                            className={classes.input}
+                            {...register("firstName")}
+                            aria-invalid={errors.firstName ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.firstName && (
+                        <p className={classes.error}>
+                            {errors.firstName.message}
+                        </p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="mobile">Telefonszám</label>
+                        <input
+                            defaultValue={userLoggedIn ? userData!.mobile : ""}
+                            type="tel"
+                            id="mobile"
+                            className={classes.input}
+                            {...register("mobile")}
+                            aria-invalid={errors.mobile ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.mobile && (
+                        <p className={classes.error}>{errors.mobile.message}</p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="postalCode">Irányítószám</label>
+                        <input
+                            defaultValue={
+                                userLoggedIn ? userData!.postalCode : ""
+                            }
+                            type="text"
+                            id="postalCode"
+                            className={classes.input}
+                            {...register("postalCode")}
+                            aria-invalid={errors.postalCode ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.postalCode && (
+                        <p className={classes.error}>
+                            {errors.postalCode.message}
+                        </p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="city">Település</label>
+                        <input
+                            defaultValue={userLoggedIn ? userData!.city : ""}
+                            type="text"
+                            id="city"
+                            className={classes.input}
+                            {...register("city")}
+                            aria-invalid={errors.city ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.city && (
+                        <p className={classes.error}>{errors.city.message}</p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="street">Közterület és házszám</label>
+                        <input
+                            defaultValue={userLoggedIn ? userData!.street : ""}
+                            type="text"
+                            id="street"
+                            className={classes.input}
+                            {...register("street")}
+                            aria-invalid={errors.street ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.street && (
+                        <p className={classes.error}>{errors.street.message}</p>
+                    )}
+                </div>
+                {!userLoggedIn && (
+                    <div className={classes["error-wrapper"]}>
+                        <div
+                            className={classes["checkbox-wrapper"]}
+                            aria-invalid={
+                                errors.dataProtection ? "true" : "false"
+                            }
+                        >
+                            <input
+                                defaultChecked={false}
+                                type="checkbox"
+                                id="dataprotection"
+                                placeholder="Adatvédelmi irányelvek"
+                                {...register("dataProtection")}
+                            />
+                            <label htmlFor="dataprotection">
+                                Elolvastam és elfogadom az Adatvédelmi elveket
+                                és az ÁSZF-ben foglaltakat.
+                            </label>
+                        </div>
                         {errors.dataProtection && (
-                            <p>{errors.dataProtection.message}</p>
+                            <p className={classes.error}>
+                                {errors.dataProtection.message}
+                            </p>
                         )}
                     </div>
                 )}
-
-                <input
-                    type="submit"
-                    value={userLoggedIn ? "Adatok módosítása" : "Regisztráció"}
-                />
+                <div className={classes.buttons}>
+                    <input
+                        type="submit"
+                        className="globalbuttons"
+                        value={
+                            userLoggedIn ? "Adatok módosítása" : "Regisztráció"
+                        }
+                    />
+                </div>
             </form>
-        </>
+        </div>
     );
 };
 

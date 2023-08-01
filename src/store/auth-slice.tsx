@@ -125,7 +125,6 @@ export const loginHandler = createAsyncThunk(
     async ({ email, password }: { email: string; password: string }) => {
         try {
             const user = await getUserWithEmail(email);
-            console.log("user:", user);
             if (!user) {
                 throw new Error("E-mail, vagy jelszó nem megfelelő.");
             }

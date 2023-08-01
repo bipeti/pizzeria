@@ -1,10 +1,8 @@
 .outer {
     padding: 0.5rem 0;
-    /* text-align: left; */
     display: grid;
     grid-template-areas: "name price button";
-    /* grid-auto-columns: auto 200px 60px; */
-    grid-auto-columns: auto auto 40px;
+    grid-auto-columns: auto minmax(140px, auto) 40px;
 }
 
 .name {
@@ -15,36 +13,27 @@
 .name h3,
 p {
     margin: 0;
+    margin-left: 0.2rem;
 }
 
 .price {
     grid-area: price;
-    /* margin: 1em; */
     font-size: bigger;
-    /* padding-left: 1em; */
     justify-self: end;
     align-self: center;
 }
 
 .priceinvalid {
     grid-area: price;
-    /* margin: 1em; */
     font-size: bigger;
-    /* padding-left: 1em; */
     justify-self: end;
     align-self: center;
     border: red dashed;
     animation: shake 1s;
 }
 
-/* .priceinvalid:before {
-    color: red;
-    content: "Válassz ki egy tételt!";
-} */
-
 .orderbutton {
     grid-area: button;
-    /* margin: 1em; */
     place-self: center;
 }
 .orderbutton img {

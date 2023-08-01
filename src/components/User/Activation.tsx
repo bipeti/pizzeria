@@ -10,7 +10,6 @@ import { AppDispatch } from "../../store";
 import FeedbackModal from "../UI/FeedbackModal";
 import { useSelector } from "react-redux";
 
-let isInitial = true;
 const Activation: React.FC = () => {
     const location = useLocation();
     const dispatch = useDispatch<AppDispatch>();
@@ -25,26 +24,22 @@ const Activation: React.FC = () => {
         (state: { general: GeneralState }) => state.general.isLoading
     );
 
-    const [missingData, seetMissingData] = useState(false);
+    const [missingData, setMissingData] = useState(false);
 
     useEffect(() => {
-        if (!isInitial) {
-            return;
-        }
-        isInitial = false;
         const urlParams = new URLSearchParams(location.search);
         const email = urlParams.get("email");
         const token = urlParams.get("token");
 
         if (!email || !token) {
-            seetMissingData(true);
+            setMissingData(true);
             return;
         }
         dispatch(activateNewUser({ email, token }));
     }, [location.search, dispatch]);
 
     const feedbackCloseHandler = () => {
-        seetMissingData(false);
+        setMissingData(false);
         navigate("/");
     };
     const generalFeedbackCloseHandler = () => {
@@ -54,14 +49,15 @@ const Activation: React.FC = () => {
 
     return (
         <>
-            <div>Activation Page</div>{" "}
+            <div>Activation Page</div>
             {missingData && (
                 <FeedbackModal
                     onClose={feedbackCloseHandler}
                     message={"Az aktiválás nem sikerült!"}
                     errorMessage={
-                        "Kérem, hogy az aktiváláshoz a küldött e-mail-ben található linket használja!"
+                        "Kérünk, hogy az aktiváláshoz használd a küldött e-mail-ben található linket!"
                     }
+                    messagetype="warning"
                 />
             )}
             {generalMessage && (

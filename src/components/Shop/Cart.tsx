@@ -17,6 +17,7 @@ import { AuthState, authActions } from "../../store/auth-slice";
 const Cart = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [isFullPageCart, setIsFullPageCart] = useState(false);
+    const [subCartIsTouched, setSubCartIsTouched] = useState(false);
 
     let cart = <p>A kosarad üres.</p>;
     let bottomCart;
@@ -75,6 +76,7 @@ const Cart = () => {
         } else {
             document.body.classList.add("noScroll");
         }
+        setSubCartIsTouched(true);
         setIsFullPageCart(!isFullPageCart);
     }
 
@@ -177,7 +179,9 @@ const Cart = () => {
                     <div>{numberToPrice(totalPrice)}</div>
                 </div>
                 <div className={classes.orderButton}>
-                    <button onClick={orderHandler}>Megrendelés</button>
+                    <button onClick={orderHandler} className="globalbuttons">
+                        Megrendelés
+                    </button>
                 </div>
             </div>
         );
@@ -215,6 +219,11 @@ const Cart = () => {
             document.body
         );
     }
+    let subCartClass = "";
+    !subCartIsTouched
+        ? // Just playing the closing effect, if the subCart was open earlier
+          (subCartClass = "")
+        : (subCartClass = classes["fullPageCart-closing"]);
 
     return (
         <>
@@ -229,7 +238,9 @@ const Cart = () => {
 
             <div
                 className={`${classes.maincart} ${
-                    isFullPageCart ? classes.fullPageCart : ""
+                    isFullPageCart
+                        ? classes["fullPageCart-opening"]
+                        : subCartClass
                 }`}
             >
                 <h3>Kosár</h3>

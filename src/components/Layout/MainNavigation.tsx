@@ -82,24 +82,34 @@ const MainNavigation = () => {
                             </NavLink>
                         </li>
                         <li>
-                            <img
-                                alt="login"
-                                src="profile.png"
+                            <span
+                                className={classes["img-container"]}
                                 onClick={showLoginModalHandler}
-                                title={
-                                    isLoggedIn
-                                        ? `Fiókom (${firstName})`
-                                        : "Belépés / Regisztráció"
-                                }
-                            />
+                            >
+                                <img
+                                    alt="login"
+                                    src="profile.png"
+                                    onClick={showLoginModalHandler}
+                                    title={
+                                        isLoggedIn
+                                            ? `Fiókom (${firstName})`
+                                            : "Belépés / Regisztráció"
+                                    }
+                                />
+                            </span>
                         </li>
                         {isLoggedIn && (
                             <li>
-                                <img
-                                    alt="logout"
-                                    src="logout.png"
+                                <span
+                                    className={`${classes["img-container"]} ${classes["logout-image"]}`}
                                     onClick={logoutHandler}
-                                />
+                                >
+                                    <img
+                                        alt="logout"
+                                        src="logout.png"
+                                        onClick={logoutHandler}
+                                    />
+                                </span>
                             </li>
                         )}
                     </ul>

@@ -167,7 +167,8 @@ const cartSlice = createSlice({
                 state.packingFee = 0;
                 state.totalPrice = 0;
                 state.isLoading = false;
-                state.orderMessage = "A megrendelés rögzítése sikerült!";
+                state.orderMessage =
+                    "Megrendelésed rögzítettük! Az ételek átvételének lehetőségéről e-mail-ben értesítést küldünk!";
                 userExpirationTokenValidation();
             })
             .addCase(sendOrderDataAsync.rejected, (state, action) => {

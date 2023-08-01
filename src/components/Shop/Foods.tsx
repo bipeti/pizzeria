@@ -111,8 +111,8 @@ const Foods = () => {
                         visible={true}
                         ariaLabel="three-circles-rotating"
                         outerCircleColor="black"
-                        innerCircleColor="red"
-                        middleCircleColor="green"
+                        innerCircleColor="white"
+                        middleCircleColor="red"
                     />
                 </div>
             )}

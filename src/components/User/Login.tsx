@@ -139,7 +139,7 @@ const Login = ({ onClose }: { onClose: () => void }) => {
     };
 
     return (
-        <>
+        <div className={classes["content-wrapper"]}>
             {authMessage && (
                 <FeedbackModal
                     onClose={authFeedbackCloseHandler}
@@ -150,8 +150,9 @@ const Login = ({ onClose }: { onClose: () => void }) => {
             {missingEmailInput && (
                 <FeedbackModal
                     onClose={missingEmailInputCloseHandler}
-                    message={"Kérem, hogy először adja meg az e-mail címét!"}
+                    message={"Kérünk, hogy először add meg az e-mail címed!"}
                     errorMessage={undefined}
+                    messagetype="warning"
                 />
             )}
             {noEmailInDatabase && (
@@ -161,6 +162,7 @@ const Login = ({ onClose }: { onClose: () => void }) => {
                         "A megadott e-mail cím nem szerepel az adatbázisban!"
                     }
                     errorMessage={undefined}
+                    messagetype="warning"
                 />
             )}
             {generalMessage && (
@@ -172,38 +174,63 @@ const Login = ({ onClose }: { onClose: () => void }) => {
                 />
             )}
 
-            <p className={classes.information}>
-                A rendeléshez bejelentkezés szükséges. Ha még nem vagy tag,
-                kérjük regisztrálj!
-            </p>
             <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
-                <input
-                    id="email"
-                    type="email"
-                    placeholder="E-mail"
-                    className={classes.input}
-                    {...register("email")}
-                />
-                {errors?.email && <p>{errors.email.message}</p>}
-                <input
-                    id="password"
-                    type="password"
-                    placeholder="Jelszó"
-                    className={classes.input}
-                    {...register("password")}
-                />
-                {errors?.password && <p>{errors.password.message}</p>}
-
-                <div className={classes.buttons}>
-                    <button type="button" onClick={resetPasswordHandler}>
-                        Elfelejtett jelszó
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="email">E-mail</label>
+                        <input
+                            id="email"
+                            type="email"
+                            className={classes.input}
+                            {...register("email")}
+                            aria-invalid={errors.email ? "true" : "false"}
+                        />
+                    </div>
+                    {errors?.email && (
+                        <p className={classes.error}>{errors.email.message}</p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="password">Jelszó</label>
+                        <input
+                            id="password"
+                            type="password"
+                            className={classes.input}
+                            {...register("password")}
+                            aria-invalid={errors.password ? "true" : "false"}
+                        />
+                    </div>
+                    {errors?.password && (
+                        <p className={classes.error}>
+                            {errors.password.message}
+                        </p>
+                    )}
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className={classes.forgottenPassword}
+                        onClick={resetPasswordHandler}
+                    >
+                        Elfelejtett jelszó?
                     </button>
-                    <button type="submit" value="submitInput">
+                </div>
+                <div className={classes.buttons}>
+                    <button
+                        type="submit"
+                        className="globalbuttons"
+                        value="submitInput"
+                    >
                         Belépés
                     </button>
                 </div>
             </form>
-        </>
+            <p className={classes.information}>
+                A rendeléshez bejelentkezés szükséges. Ha még nem vagy tag,
+                kérjük regisztrálj!
+            </p>
+        </div>
     );
 };
 

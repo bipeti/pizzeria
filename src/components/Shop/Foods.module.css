@@ -8,10 +8,10 @@
     display: flex;
     flex-flow: row;
     justify-content: space-between;
+    margin-bottom: 2rem;
 }
 
 .products .elements {
-    /* height: auto; */
     border-bottom: solid 1px lightgray;
 }
 .elements:last-child {

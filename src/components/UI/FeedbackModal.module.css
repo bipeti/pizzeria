@@ -1,0 +1,8 @@
+.wrapper {
+    margin: 2rem;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}

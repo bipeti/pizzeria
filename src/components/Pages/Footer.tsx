@@ -1,15 +1,34 @@
+import classes from "./Footer.module.css";
+
 export default function Footer() {
     return (
-        <>
-            <p>
-                Litterarum vero at tincidunt adipiscing vel. Dolore quod in
-                lectores littera iis. Dolor lobortis sequitur nobis per soluta.
-                Dignissim fiant diam option facer decima. Facilisis est in erat
-                ullamcorper eodem. Mirum veniam quam luptatum ut anteposuerit.
-                Commodo luptatum qui parum humanitatis lobortis. Molestie
-                feugiat hendrerit dolor nam sed. Insitam feugait te wisi doming
-                quam. Nostrud formas in augue dolore sit.
-            </p>
-        </>
+        <div className={classes.footer}>
+            <div className={classes.inner}>
+                <div className={classes.informations}>
+                    <span className={classes["img-container"]}>
+                        <img alt="place" src="./footer/place.png" />
+                    </span>
+                    <p>2842 Ludasmeggyes, Március 15. tér 40.</p>
+                </div>
+                <div className={classes.informations}>
+                    <span className={classes["img-container"]}>
+                        <img alt="phone" src="./footer/phone.png" />
+                    </span>
+                    <p>+36 12 345 6789</p>
+                </div>
+                <div className={classes.informations}>
+                    <span className={classes["img-container"]}>
+                        <img alt="mail" src="./footer/mail.png" />
+                    </span>
+                    <p>ludasmeggyes@pizzeria.hu</p>
+                </div>
+                <div className={classes.informations}>
+                    <span className={classes["img-container"]}>
+                        <img alt="open" src="./footer/open.png" />
+                    </span>
+                    <p>H-V 11:00 - 20:00 </p>
+                </div>
+            </div>
+        </div>
     );
 }

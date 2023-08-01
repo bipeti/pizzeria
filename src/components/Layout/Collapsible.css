@@ -6,7 +6,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgb(182, 175, 175);
+    color: var(--TEXT-PRIMARY);
+    background-color: var(--FIRST-COLOR);
     border-top: solid rgb(48, 47, 47) 1px;
     text-align: left;
     padding: 0.5rem;
@@ -31,8 +32,8 @@
 }
 
 .ReactCollapse--content {
-    color: black;
-    background-color: white;
+    color: var(--TEXT-PRIMARY);
+    background-color: var(--BACKGROUND);
 }
 
 .group-arrow {
@@ -42,10 +43,10 @@
     margin-right: 5px;
     border-style: solid;
     border-width: 10px 10px 0 10px;
-    border-color: #333 transparent transparent transparent;
+    border-color: var(--ARROW-COLOR) transparent transparent transparent;
     transition: transform 0.3s;
 }
 
-.open .arrow {
+.open .group-arrow {
     transform: rotate(-180deg);
 }

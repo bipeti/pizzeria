@@ -67,7 +67,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
 
     let hasExtras = food.extras !== undefined && food.extras.length > 0 && (
         <Collapsible title="Milyen extrát kérsz hozzá?" isOpened={true}>
-            <ul className={classes.inner}>
+            <ul className={classes.list}>
                 {food.extras.map((extra) => (
                     <li key={extra.id}>
                         <input
@@ -147,21 +147,31 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
 
     return (
         <Modal onClose={onClose}>
-            <h2>
-                {food.name} {myVarietyName}
-            </h2>
-            {price}
-            {hasExtras}
-            {hasChildrenPortion}
-            <div className={classes.packing}>
-                <p>Csomagolás: {numberToPrice(food.packagingFee)}</p>
-            </div>
-            <div className={classes.subTotal}>
-                <p>Ár: {numberToPrice(subTotal)}</p>
-            </div>
-            <div className={classes.buttons}>
-                <button onClick={onClose}>Mégsem</button>
-                <button onClick={addToCartHandler}>Kosárba</button>
+            <div className={classes.extraWrapper}>
+                <h2>
+                    {food.name} {myVarietyName}
+                </h2>
+                {food.description}
+                {price}
+                {hasExtras}
+                {hasChildrenPortion}
+                <div className={classes.packing}>
+                    <p>Csomagolás: {numberToPrice(food.packagingFee)}</p>
+                </div>
+                <div className={classes.subTotal}>
+                    <p>Ár: {numberToPrice(subTotal)}</p>
+                </div>
+                <div className={classes.buttons}>
+                    <button className="globalbuttons" onClick={onClose}>
+                        Mégsem
+                    </button>
+                    <button
+                        className="globalbuttons"
+                        onClick={addToCartHandler}
+                    >
+                        Kosárba
+                    </button>
+                </div>
             </div>
         </Modal>
     );

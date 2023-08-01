@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
-import "./App.css";
 import RootLayout from "./components/Pages/RootLayout";
 import HomePage from "./components/Pages/HomePage";
 import FoodsPage from "./components/Pages/FoodsPage";

@@ -1,0 +1,26 @@
+.outer {
+    display: flex;
+    flex-flow: row nowrap;
+    /* height: auto; */
+    /* min-height: 90vh; */
+}
+
+.pizza {
+    display: none;
+    width: 300px;
+    background-image: url("pizza.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@media (min-width: 600px) {
+    .pizza {
+        display: block;
+    }
+}
+
+@media (min-width: 769px) {
+    .pizza {
+        display: block;
+    }
+}

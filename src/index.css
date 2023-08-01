@@ -2,9 +2,19 @@
     box-sizing: border-box;
 }
 
+html {
+    background-color: var(--BACKGROUND);
+    background-image: url("pizza-bg.jpg");
+    background-repeat: no-repeat;
+    background-size: content;
+    background-position: top center;
+    min-height: 100vh;
+}
+
 body {
     margin: 0;
     padding: 0;
+    opacity: 0.9;
 }
 
 .noScroll {
@@ -14,19 +24,53 @@ body {
 :root,
 .light {
     /* ---COLORS--- */
-    --BACKGROUND: white;
+    --BACKGROUND: #f0be74;
     --TEXT-PRIMARY: black;
+    --TEXT-SECONDARY: white;
+    --FIRST-COLOR: #efa435;
+    --SECOND-COLOR: #c88116;
+    --ARROW-COLOR: #100f0f;
 
     /* ---GENERAL--- */
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    --FONT-SIZE: calc(15px + 0.390625vw);
+    font-size: 1rem;
     line-height: 24px;
-    max-width: 1200px;
-    margin: auto;
+    margin: 0;
     padding: 0;
 
     /*---CART---*/
     --MAINCART-WIDTH: 280px;
+
+    /*---BUTTONS---*/
+    --BUTTON-PADDING: 0.75rem 1.5rem;
+    --BUTTON-MARGIN: 0.1rem;
+    --BUTTON-FONT-SIZE: 1rem;
+    --BUTTON-BORDER: solid var(--FIRST-COLOR) 1px;
+    --BUTTON-BACKGROUND-COLOR: var(--FIRST-COLOR);
+    --BUTTON-COLOR: var(--TEXT-SECONDARY);
+
+    /*---Z-INDEXES---*/
+    --CART-Z-INDEX: 50;
+    --BACKDROP-Z-INDEX: 100;
+    --MODAL-Z-INDEX: 101;
+    --FEEDBACK-BACKDROP-Z-INDEX: 102;
+    --FEEDBACK-MODAL-Z-INDEX: 103;
+}
+
+.globalbuttons {
+    padding: var(--BUTTON-PADDING);
+    margin: var(--BUTTON-MARGIN);
+    /* border-radius: 6px; */
+    font-size: var(--BUTTON-FONT-SIZE);
+    border: var(--BUTTON-BORDER);
+    background-color: var(--BUTTON-BACKGROUND-COLOR);
+    color: var(--BUTTON-COLOR);
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+.globalbuttons:hover {
+    background-color: var(--SECOND-COLOR);
 }
 
 [data-theme="dark"],
@@ -51,18 +95,37 @@ ul {
 }
 
 main {
-    margin: 2rem auto;
+    /* margin: 0 auto; */
+    margin: auto;
     text-align: center;
+    max-width: 1200px;
+    flex: 1;
 }
 
+h1 {
+    /* color: var(--FIRST-COLOR);
+    text-shadow: 2px 2px 7px white; */
+    color: var(--TEXT-SECONDARY);
+    text-shadow: var(--TEXT-PRIMARY) 2px 2px 7px;
+    line-height: normal;
+}
+
+p {
+    color: var(--TEXT-PRIMARY);
+}
 @media (min-width: 600px) {
-    :root {
-        padding: 1em;
+    main {
+        padding: 0 1em;
+        /* padding: 0; */
     }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
     :root {
-        padding: 1em;
+        font-size: 1.1rem;
+    }
+
+    main {
+        padding: 0 1em;
     }
 }

@@ -101,7 +101,7 @@ const NewPassword = () => {
 
     useEffect(() => {
         if (!user && !tokenInEmail) {
-            console.log("nothing");
+            //  If he comes from outside (no logged in) and no valid token.
             navigate("/");
         }
     }, [navigate, user, tokenInEmail]);
@@ -158,7 +158,7 @@ const NewPassword = () => {
     };
 
     return (
-        <>
+        <div className={classes["content-wrapper"]}>
             {authMessage && (
                 <FeedbackModal
                     isLoading={isLoading}
@@ -170,44 +170,71 @@ const NewPassword = () => {
             {passwordsDontMatch && (
                 <FeedbackModal
                     onClose={passwordsDontMatchCloseHandler}
-                    message={"Jelszó módosítás nem sikerült!"}
-                    errorMessage={"A két jelszó nem egyezik!"}
+                    message={"A két jelszó nem egyezik!"}
+                    errorMessage={undefined}
+                    messagetype="warning"
                 />
             )}
             {missingLostPasswordInDatabase && (
                 <FeedbackModal
                     onClose={missingLostPasswordHandler}
                     message={
-                        "Kérem, hogy az e-mail-ben küldött aktiválás menetét kövesse!"
+                        "Az aktiváló token nem található az adatbázisban. Kérünk, hogy kövesd az e-mail-ben küldött aktiválás menetét!"
                     }
-                    errorMessage={
-                        "Az aktiváló token nem található az adatbázisban."
-                    }
+                    errorMessage={undefined}
+                    messagetype="warning"
                 />
             )}
             <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
-                <input
-                    id="newPassword"
-                    type="password"
-                    placeholder="Új jelszó"
-                    className={classes.input}
-                    {...register("newPassword")}
-                />
-                {errors?.newPassword && <p>{errors.newPassword.message}</p>}
-                <input
-                    id="reNewPassword"
-                    type="password"
-                    placeholder="Új jelszó még egyszer"
-                    className={classes.input}
-                    {...register("reNewPassword")}
-                />
-                {errors?.reNewPassword && <p>{errors.reNewPassword.message}</p>}
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="newPassword">Új jelszó</label>
 
+                        <input
+                            id="newPassword"
+                            type="password"
+                            className={classes.input}
+                            {...register("newPassword")}
+                            aria-invalid={errors.newPassword ? "true" : "false"}
+                        />
+                    </div>
+                    {errors?.newPassword && (
+                        <p className={classes.error}>
+                            {errors.newPassword.message}
+                        </p>
+                    )}
+                </div>
+                <div className={classes["error-wrapper"]}>
+                    <div className={classes["input-wrapper"]}>
+                        <label htmlFor="reNewPassword">
+                            Új jelszó még egyszer
+                        </label>
+
+                        <input
+                            id="reNewPassword"
+                            type="password"
+                            className={classes.input}
+                            {...register("reNewPassword")}
+                            aria-invalid={
+                                errors.reNewPassword ? "true" : "false"
+                            }
+                        />
+                    </div>
+                    {errors?.reNewPassword && (
+                        <p className={classes.error}>
+                            {errors.reNewPassword.message}
+                        </p>
+                    )}
+                </div>
                 <div className={classes.buttons}>
-                    <input type="submit" value="Módosítás"></input>
+                    <input
+                        type="submit"
+                        className="globalbuttons"
+                        value="Módosítás"
+                    ></input>
                 </div>
             </form>
-        </>
+        </div>
     );
 };
 

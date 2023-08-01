@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import classes from "../User/User.module.css";
+import classes from "./Pages.module.css";
+import classesUserModal from "../User/User.module.css";
 import NewPassword from "../User/NewPassword";
 import UserModal from "../User/UserModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AuthState } from "../../store/auth-slice";
 
@@ -17,6 +18,7 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
     const isLoggedIn = useSelector(
         (state: { auth: AuthState }) => state.auth.isLoggedIn
     );
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isPasswordReset) {
@@ -30,18 +32,35 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
 
     const hideModalHandler = () => {
         setShowModifyPassword(false);
+        navigate("/");
     };
 
     return (
         <>
-            <h1>My Home Page</h1>
+            <h1>Üdvözlünk megújult honlapunkon!</h1>
+            <div className={classes.information}>
+                <p>
+                    Most már honlapunkon keresztül is kényelmesen és gyorsan
+                    leadhatod megrendeléseidet!
+                </p>
+                <p>
+                    A Pizzéria huszonhárom évvel ezelőtt nyílt meg
+                    Ludasmeggyesen és rövid idő alatt a környék kedvenc
+                    éttermévé vált a barátságos kiszolgálásnak és a finom
+                    ételeknek köszönhetően. A fatüzeléses kemencében sülő pizzák
+                    látványa és ízvilága a környező településeken élők számára
+                    is népszerűvé tette az éttermünket, napjainkban nemcsak a
+                    pizzák, hanem a frissensültek, a marha-, és sertéshúsból
+                    készült ételek is megtalálhatóak étlapunkon. Új ötletekkel
+                    és hagyományos ételekkel rendszeresen frissítjük a
+                    kínálatunkat, miközben az interneten rendelők számára
+                    változatos akciókkal tesszük vonzóbbá a rendelést.
+                </p>
+            </div>
             {showModifyPassword && (
                 <UserModal onClose={hideModalHandler}>
-                    <div className={classes.content}>
-                        <div
-                            id="passwordModify"
-                            // className={classes.tabcontent2}
-                        >
+                    <div className={classesUserModal.content}>
+                        <div id="passwordModify">
                             <NewPassword />
                         </div>
                     </div>
