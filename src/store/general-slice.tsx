@@ -23,7 +23,7 @@ import {
     MY_SERVICE_ID,
 } from "../components/utils/myConsts";
 import { getUserWithEmail } from "./auth-slice";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
 
 export interface UserData {
     email: string;
@@ -59,7 +59,7 @@ type emailSendProps = {
     token: string;
 };
 
-let salt = bcrypt.genSaltSync(10);
+// let salt = bcrypt.genSaltSync(10);
 
 export const emailSend = async (
     templateid: string,
@@ -341,7 +341,8 @@ export const createNewUser = createAsyncThunk(
         }
 
         const activationCode = crypto.randomUUID();
-        let hashedPassword = bcrypt.hashSync(userData.password, salt);
+        // let hashedPassword = bcrypt.hashSync(userData.password, salt);
+        let hashedPassword = "bcrypt.hashSync(userData.password, salt);";
         const modifiedUserData = { ...userData };
         modifiedUserData.password = hashedPassword;
 
