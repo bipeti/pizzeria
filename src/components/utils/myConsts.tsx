@@ -14,6 +14,9 @@ export const DB_PATH =
 export const HOURS_TO_SAVE_CARTS_DATA = 2;
 export const HOURS_TO_SAVE_USERS_DATA = 2;
 
+/* to encrypt */
+export const SECRET_PASS = "R4tV56xs42t2W";
+
 /* dummy foods data */
 export const DUMMY_PRODUCTS: Food[] = [
     {

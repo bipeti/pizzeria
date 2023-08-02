@@ -8,8 +8,11 @@ import {
 import {
     DB_PATH,
     HOURS_TO_SAVE_USERS_DATA,
+    SECRET_PASS,
 } from "../components/utils/myConsts";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
+import CryptoJS from "crypto-js";
+
 import {
     equalTo,
     get,
@@ -128,9 +131,21 @@ export const loginHandler = createAsyncThunk(
             if (!user) {
                 throw new Error("E-mail, vagy jelszó nem megfelelő.");
             }
-            if (!bcrypt.compareSync(password, user.password)) {
+            const passwordInBytes = CryptoJS.AES.decrypt(
+                user.password,
+                SECRET_PASS
+            );
+            const decryptedPassword = JSON.parse(
+                passwordInBytes.toString(CryptoJS.enc.Utf8)
+            );
+
+            if (password !== decryptedPassword) {
                 throw new Error("E-mail, vagy jelszó nem megfelelő.");
             }
+
+            // if (!bcrypt.compareSync(password, user.password)) {
+            //     throw new Error("E-mail, vagy jelszó nem megfelelő.");
+            // }
             return user;
         } catch (error) {
             if ((error as Error).message === "DATABASE_UNREACHABLE") {
