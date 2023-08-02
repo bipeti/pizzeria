@@ -41,7 +41,7 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
             <h2>Üdvözlünk megújult honlapunkon!</h2>
             <div className={classes.information}>
                 <p>
-                    Ludas Pizzéria huszonhárom évvel ezelőtt nyílt meg
+                    A Ludas Pizzéria huszonhárom évvel ezelőtt nyílt meg
                     Ludasmeggyesen és rövid idő alatt a környék kedvenc
                     éttermévé vált a barátságos kiszolgálásnak és a finom
                     ételeknek köszönhetően. A fatüzeléses kemencében sülő pizzák
