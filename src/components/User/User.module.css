@@ -9,8 +9,11 @@
 .content {
     display: flex;
     flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     padding-left: 0.3rem;
+    min-width: 300px;
 }
 
 .content .title {
@@ -112,7 +115,7 @@
 }
 
 .forgottenPassword {
-    color: gray;
+    color: #444444;
     /* margin: 0.5rem; */
     background-color: var(--BACKGROUND);
     border: none;

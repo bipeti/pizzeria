@@ -113,11 +113,20 @@ h2 {
 
 p {
     color: var(--TEXT-PRIMARY);
+
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5rem;
 }
+
 @media (min-width: 600px) {
     main {
         padding: 0 1em;
-        /* padding: 0; */
+    }
+    p {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.8rem;
     }
 }
 

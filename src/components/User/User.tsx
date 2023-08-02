@@ -48,7 +48,9 @@ const User = ({ onClose }: { onClose: () => void }) => {
                     </TabPanel>
                     <TabPanel className={classes.content}>
                         <div className={classes["content-wrapper"]}>
-                            Fejlesztés alatt...
+                            <div className={classes.content}>
+                                Fejlesztés alatt...
+                            </div>
                         </div>
                     </TabPanel>
                 </>

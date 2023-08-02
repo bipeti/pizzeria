@@ -4,11 +4,26 @@
     justify-content: center;
 }
 
+.header nav {
+    position: relative;
+}
+
 .header .logo {
     border-radius: 50%;
     border: solid 5px var(--FIRST-COLOR);
     transform: rotateZ(-18deg);
-    position: relative;
+    position: absolute;
+    width: 70px;
+    left: -55px;
+    top: 35px;
+}
+
+@media (min-width: 550px) {
+    .header .logo {
+        width: 100px;
+        left: -110px;
+        top: 0px;
+    }
 }
 
 .list {

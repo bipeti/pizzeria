@@ -41,19 +41,13 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
             <h2>Üdvözlünk megújult honlapunkon!</h2>
             <div className={classes.information}>
                 <p>
-                    Most már honlapunkon keresztül is kényelmesen és gyorsan
-                    leadhatod megrendeléseidet!
-                </p>
-                <p>
-                    A Pizzéria huszonhárom évvel ezelőtt nyílt meg
+                    Ludas Pizzéria huszonhárom évvel ezelőtt nyílt meg
                     Ludasmeggyesen és rövid idő alatt a környék kedvenc
                     éttermévé vált a barátságos kiszolgálásnak és a finom
                     ételeknek köszönhetően. A fatüzeléses kemencében sülő pizzák
                     látványa és ízvilága a környező településeken élők számára
-                    is népszerűvé tette az éttermünket, napjainkban nemcsak a
-                    pizzák, hanem a frissensültek, a marha-, és sertéshúsból
-                    készült ételek is megtalálhatóak étlapunkon. Új ötletekkel
-                    és hagyományos ételekkel rendszeresen frissítjük a
+                    is népszerűvé tette az éttermünket. Új ötletekkel és
+                    hagyományos ételekkel rendszeresen frissítjük a
                     kínálatunkat, miközben az interneten rendelők számára
                     változatos akciókkal tesszük vonzóbbá a rendelést.
                 </p>

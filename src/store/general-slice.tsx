@@ -171,13 +171,13 @@ export const fetchPendingUsers = async (email: string, token: string) => {
         if (foundEntry?.key === undefined) {
             throw new Error(
                 // email is not in pending
-                "Kérem, hogy a regisztrációt a fenti menüben kezdeményezze az adatai megadásával!"
+                "Kérünk, hogy a regisztrációt a fenti menüben kezdeményezd az adataid megadásával!"
             );
         }
         if (foundEntry.data.activationCode !== token) {
             // email is ok, token is not ok
             throw new Error(
-                "Érvénytelen token! Kérem, hogy kattintson az e-mail-ben kapott linkre!"
+                "Érvénytelen token! Kérem, hogy kattints az e-mail-ben kapott linkre!"
             );
         }
         return foundEntry;
@@ -409,7 +409,7 @@ const generalSlice = createSlice({
             })
             .addCase(sendLostPasswordData.fulfilled, (state) => {
                 state.message =
-                    "Az új jelszó beállításához szükséges e-mailt elküldtük, kérjük ellenőrizze a postafiókját!";
+                    "Az új jelszó beállításához szükséges e-mailt elküldtük, kérjük, hogy ellenőrizd a postafiókodat!";
                 state.error = undefined;
                 state.isLoading = false;
             })
@@ -426,7 +426,7 @@ const generalSlice = createSlice({
             })
             .addCase(createNewUser.fulfilled, (state) => {
                 state.message =
-                    "A felhasználó aktiválásához szükséges e-mailt elküldtük, kérjük ellenőrizze a postafiókját!";
+                    "A felhasználó aktiválásához szükséges e-mailt elküldtük, kérjük, hogy ellenőrizd a postafiókodat!";
                 state.error = undefined;
                 state.isLoading = false;
             })
@@ -443,7 +443,7 @@ const generalSlice = createSlice({
             })
             .addCase(activateNewUser.fulfilled, (state) => {
                 state.message =
-                    "A felhasználó aktiválása sikerült! Kérjük, hogy a bejelentkezéshez a fenti menüt használja!";
+                    "A felhasználó aktiválása sikerült! Kérjük, hogy a bejelentkezéshez a fenti menüt használd!";
                 state.error = undefined;
                 state.isLoading = false;
             })

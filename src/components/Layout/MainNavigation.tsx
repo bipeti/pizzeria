@@ -40,6 +40,17 @@ const MainNavigation = () => {
 
             <header className={classes.header}>
                 <nav>
+                    <img
+                        alt="logo"
+                        src="logo.png"
+                        className={classes.logo}
+                        title={
+                            isLoggedIn
+                                ? `Fiókom (${firstName})`
+                                : "Belépés / Regisztráció"
+                        }
+                    />
+
                     <ul className={classes.list}>
                         <li>
                             <NavLink
