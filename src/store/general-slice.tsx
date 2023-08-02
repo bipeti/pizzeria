@@ -25,6 +25,7 @@ import {
 } from "../components/utils/myConsts";
 import { getUserWithEmail } from "./auth-slice";
 // import bcrypt from "bcryptjs";
+import CryptoJS from "crypto-js";
 
 export interface UserData {
     email: string;

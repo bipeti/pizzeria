@@ -76,10 +76,6 @@ const resolver: Resolver<LoginFormValues> = async (values) => {
 
 // let salt = bcrypt.genSaltSync(10);
 
-// const bytes = CryptoJS.AES.decrypt(data, secretPass);
-// const origin = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-// console.log("decrypted:", origin);
-
 const NewPassword = () => {
     const {
         register,
