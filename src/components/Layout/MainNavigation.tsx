@@ -61,7 +61,7 @@ const MainNavigation = () => {
                                 Ételeink
                             </NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                             <NavLink
                                 to="galery"
                                 className={({ isActive }) =>
@@ -70,7 +70,7 @@ const MainNavigation = () => {
                             >
                                 Galéria
                             </NavLink>
-                        </li>
+                        </li> */}
                         <li>
                             <NavLink
                                 to="contact"

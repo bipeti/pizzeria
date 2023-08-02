@@ -37,7 +37,8 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
 
     return (
         <>
-            <h1>Üdvözlünk megújult honlapunkon!</h1>
+            <h1>Ludas Pizzéria</h1>
+            <h2>Üdvözlünk megújult honlapunkon!</h2>
             <div className={classes.information}>
                 <p>
                     Most már honlapunkon keresztül is kényelmesen és gyorsan

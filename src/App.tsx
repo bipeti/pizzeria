@@ -16,7 +16,7 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <HomePage isPasswordReset={false} /> },
             { path: "foods", element: <FoodsPage /> },
-            { path: "galery", element: <GaleryPage /> },
+            // { path: "galery", element: <GaleryPage /> },
             { path: "contact", element: <ContactPage /> },
             { path: "activation", element: <Activation /> },
             { path: "admin", element: <Admin /> },
