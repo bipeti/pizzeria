@@ -3,7 +3,7 @@
 
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
-// import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
@@ -72,7 +72,7 @@ const resolver: Resolver<LoginFormValues> = async (values) => {
     };
 };
 
-// let salt = bcrypt.genSaltSync(10);
+let salt = bcrypt.genSaltSync(10);
 
 const NewPassword = () => {
     const {
@@ -111,8 +111,7 @@ const NewPassword = () => {
             setPasswordsDontMatch(true);
             return;
         }
-        // let hashedPassword = bcrypt.hashSync(passwordData.newPassword, salt);
-        let hashedPassword = "bcrypt.hashSync(passwordData.newPassword, salt)";
+        let hashedPassword = bcrypt.hashSync(passwordData.newPassword, salt);
         let relatedEmail: string;
 
         if (!user) {
