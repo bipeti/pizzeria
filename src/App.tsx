@@ -3,7 +3,7 @@ import React from "react";
 import RootLayout from "./components/Pages/RootLayout";
 import HomePage from "./components/Pages/HomePage";
 import FoodsPage from "./components/Pages/FoodsPage";
-import GaleryPage from "./components/Pages/GaleryPage";
+// import GaleryPage from "./components/Pages/GaleryPage";
 import ContactPage from "./components/Pages/ContactPage";
 import Activation from "./components/User/Activation";
 import Admin from "./components/Pages/Admin";
