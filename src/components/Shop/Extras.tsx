@@ -148,7 +148,7 @@ const Extras = ({ onClose, food, priceId }: ExtrasProps) => {
     return (
         <Modal onClose={onClose}>
             <div className={classes.extraWrapper}>
-                <h2>
+                <h2 className={classes.title}>
                     {food.name} {myVarietyName}
                 </h2>
                 {food.description}

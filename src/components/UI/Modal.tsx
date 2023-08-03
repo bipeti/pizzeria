@@ -22,19 +22,27 @@ type ModalOverlayProps = {
     children: ReactNode;
     feedback?: boolean;
     onClose: () => void;
+    hideCloseIcon?: boolean;
 };
 
-const ModalOverlay = ({ children, feedback, onClose }: ModalOverlayProps) => {
+const ModalOverlay = ({
+    children,
+    feedback,
+    onClose,
+    hideCloseIcon,
+}: ModalOverlayProps) => {
     return (
         <div className={`${classes.modal} ${feedback ? classes.feedback : ""}`}>
             <div className={classes.contentWrapper}>
                 <div className={classes.content}>{children}</div>
-                <img
-                    alt="close"
-                    className={classes.close_img}
-                    src="close.png"
-                    onClick={onClose}
-                />
+                {!hideCloseIcon && (
+                    <img
+                        alt="close"
+                        className={classes.close_img}
+                        src="close.png"
+                        onClick={onClose}
+                    />
+                )}
             </div>
         </div>
     );
@@ -44,9 +52,10 @@ type ModalProps = {
     onClose: () => void;
     children: ReactNode;
     feedback?: boolean;
+    hideCloseIcon?: boolean;
 };
 
-const Modal = ({ onClose, children, feedback }: ModalProps) => {
+const Modal = ({ onClose, children, feedback, hideCloseIcon }: ModalProps) => {
     return (
         <>
             {ReactDOM.createPortal(
@@ -54,7 +63,11 @@ const Modal = ({ onClose, children, feedback }: ModalProps) => {
                 document.getElementById("overlays")!
             )}
             {ReactDOM.createPortal(
-                <ModalOverlay feedback={feedback} onClose={onClose}>
+                <ModalOverlay
+                    feedback={feedback}
+                    onClose={onClose}
+                    hideCloseIcon={hideCloseIcon}
+                >
                     {children}
                 </ModalOverlay>,
                 document.getElementById("overlays")!

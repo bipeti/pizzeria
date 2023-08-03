@@ -104,8 +104,6 @@ main {
 
 h1,
 h2 {
-    /* color: var(--FIRST-COLOR);
-    text-shadow: 2px 2px 7px white; */
     color: var(--TEXT-SECONDARY);
     text-shadow: var(--TEXT-PRIMARY) 2px 2px 7px;
     line-height: normal;
@@ -113,20 +111,11 @@ h2 {
 
 p {
     color: var(--TEXT-PRIMARY);
-
-    font-size: 1rem;
-    font-weight: bold;
-    line-height: 1.5rem;
 }
 
 @media (min-width: 600px) {
     main {
         padding: 0 1em;
-    }
-    p {
-        font-size: 1.1rem;
-        font-weight: bold;
-        line-height: 1.8rem;
     }
 }
 

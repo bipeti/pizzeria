@@ -4,6 +4,11 @@
     max-width: 1200px;
 }
 
+.title {
+    color: var(--TEXT-PRIMARY);
+    text-shadow: none;
+}
+
 .list {
     padding: 1em 0;
     column-count: 1;

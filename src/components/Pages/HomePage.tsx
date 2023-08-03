@@ -6,10 +6,13 @@ import UserModal from "../User/UserModal";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AuthState } from "../../store/auth-slice";
+import DemoModal from "../UI/DemoModal";
 
 type HomePageProps = {
     isPasswordReset: boolean;
 };
+
+let isInitial = true;
 
 export default function HomePage({ isPasswordReset }: HomePageProps) {
     const [showModifyPassword, setShowModifyPassword] =
@@ -19,6 +22,14 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
         (state: { auth: AuthState }) => state.auth.isLoggedIn
     );
     const navigate = useNavigate();
+    const [showDemoModal, setShowDemoModal] = useState(false);
+
+    useEffect(() => {
+        if (isInitial) {
+            isInitial = false;
+            setShowDemoModal(true);
+        }
+    }, []);
 
     useEffect(() => {
         if (isPasswordReset) {
@@ -30,9 +41,13 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
         }
     }, [isPasswordReset, location.search, isLoggedIn]);
 
-    const hideModalHandler = () => {
+    const hideModifyPasswordModalHandler = () => {
         setShowModifyPassword(false);
         navigate("/");
+    };
+
+    const hideDemoModalHandler = () => {
+        setShowDemoModal(false);
     };
 
     return (
@@ -53,7 +68,7 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
                 </p>
             </div>
             {showModifyPassword && (
-                <UserModal onClose={hideModalHandler}>
+                <UserModal onClose={hideModifyPasswordModalHandler}>
                     <div className={classesUserModal.content}>
                         <div id="passwordModify">
                             <NewPassword />
@@ -61,6 +76,7 @@ export default function HomePage({ isPasswordReset }: HomePageProps) {
                     </div>
                 </UserModal>
             )}
+            {showDemoModal && <DemoModal onClose={hideDemoModalHandler} />}
         </>
     );
 }

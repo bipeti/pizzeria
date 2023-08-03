@@ -90,6 +90,12 @@ const resolver: Resolver<RegistrationFormValues> = async (values) => {
             type: "range",
             message: "A telefonszám legalább 10 karakterből áll",
         };
+    } else if (!values.mobile.match(/^[\d+-]{10,}$/)) {
+        errors.mobile = {
+            type: "pattern",
+            message:
+                "A telefonszám 10 vagy több számjegyből, + és - jelekből állhat",
+        };
     }
 
     if (!values.postalCode) {
@@ -205,6 +211,10 @@ const Registration = ({ userData }: { userData?: UserData }) => {
                 />
             )}
             <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+                <p className={classes["demo-info"]}>
+                    Az oldal demonstrációs célokat szolgál! Kérem, hogy fiktív
+                    adatokat használj!
+                </p>
                 <div className={classes["error-wrapper"]}>
                     <div className={classes["input-wrapper"]}>
                         <label htmlFor="email">E-mail</label>

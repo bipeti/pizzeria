@@ -1,9 +1,9 @@
 {
-    "short_name": "Pizzeria",
-    "name": "Pizzeria",
+    "short_name": "Ludas pizzéria",
+    "name": "Ludas pizzéria",
     "icons": [
         {
-            "src": "favicon.ico",
+            "src": "ludas.ico",
             "sizes": "64x64 32x32 24x24 16x16",
             "type": "image/x-icon"
         }
