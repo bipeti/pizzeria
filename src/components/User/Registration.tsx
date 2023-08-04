@@ -4,7 +4,7 @@
 import { useForm, Resolver } from "react-hook-form";
 import classes from "./User.module.css";
 import { getUserToken } from "../utils/token";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AuthState, authActions, modifyUserData } from "../../store/auth-slice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
@@ -159,13 +159,18 @@ const Registration = ({ userData }: { userData?: UserData }) => {
     const generalIsLoading = useSelector(
         (state: { general: GeneralState }) => state.general.isLoading
     );
+    const [tryModify, setTryModify] = useState(false);
 
     const newUserHandler = async (userData: RegistrationFormValues) => {
         dispatch(createNewUser({ userData }));
     };
 
     const modifyUserHandler = async (userData: RegistrationFormValues) => {
-        console.log("mod", userData);
+        if (userData.email === "demo@ludasmeggyes.hu") {
+            setTryModify(true);
+            return;
+        }
+
         dispatch(modifyUserData({ userData }));
     };
 
@@ -192,6 +197,10 @@ const Registration = ({ userData }: { userData?: UserData }) => {
         dispatch(generalActions.clearMessages());
     };
 
+    const tryModifyCloseHandler = () => {
+        setTryModify(false);
+    };
+
     return (
         <div className={classes["content-wrapper"]}>
             {authMessage && (
@@ -208,6 +217,16 @@ const Registration = ({ userData }: { userData?: UserData }) => {
                     onClose={generalFeedbackCloseHandler}
                     message={generalMessage}
                     errorMessage={generalErrorMessage}
+                />
+            )}
+            {tryModify && (
+                <FeedbackModal
+                    onClose={tryModifyCloseHandler}
+                    message={
+                        "Te kis hamis! A demo felhasználó adatait nem engedem megváltoztatni! :)"
+                    }
+                    errorMessage={undefined}
+                    messagetype="warning"
                 />
             )}
             <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>

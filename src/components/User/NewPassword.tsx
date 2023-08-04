@@ -100,6 +100,7 @@ const NewPassword = () => {
     const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
     const [missingLostPasswordInDatabase, setMissingLostPasswordInDatabase] =
         useState(false);
+    const [tryModify, setTryModify] = useState(false);
 
     useEffect(() => {
         if (!user && !tokenInEmail) {
@@ -134,6 +135,10 @@ const NewPassword = () => {
             // password modification from inside
             relatedEmail = user.email;
         }
+        if (relatedEmail === "demo@ludasmeggyes.hu") {
+            setTryModify(true);
+            return;
+        }
 
         dispatch(
             modifyUserPassword({
@@ -161,6 +166,10 @@ const NewPassword = () => {
 
     const missingLostPasswordHandler = () => {
         setMissingLostPasswordInDatabase(false);
+    };
+
+    const tryModifyCloseHandler = () => {
+        setTryModify(false);
     };
 
     return (
@@ -191,6 +200,17 @@ const NewPassword = () => {
                     messagetype="warning"
                 />
             )}
+            {tryModify && (
+                <FeedbackModal
+                    onClose={tryModifyCloseHandler}
+                    message={
+                        "Te kis hamis! A demo felhasználó jelszavát nem engedem megváltoztatni! :)"
+                    }
+                    errorMessage={undefined}
+                    messagetype="warning"
+                />
+            )}
+
             <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
                 <div className={classes["error-wrapper"]}>
                     <div className={classes["input-wrapper"]}>

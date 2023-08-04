@@ -74,6 +74,7 @@ const Login = ({ onClose }: { onClose: () => void }) => {
     );
     const [missingEmailInput, setMissingEmailInput] = useState(false);
     const [noEmailInDatabase, setNoEmailInDatabase] = useState(false);
+    const [tryDemoPasswordModify, setTryDemoPasswordModify] = useState(false);
 
     const {
         register,
@@ -107,6 +108,10 @@ const Login = ({ onClose }: { onClose: () => void }) => {
             setMissingEmailInput(true);
             return;
         }
+        if (email === "demo@ludasmeggyes.hu") {
+            setTryDemoPasswordModify(true);
+            return;
+        }
         const userData = await getUserWithEmail(email);
         if (!userData) {
             setNoEmailInDatabase(true);
@@ -134,6 +139,10 @@ const Login = ({ onClose }: { onClose: () => void }) => {
         setMissingEmailInput(false);
     };
 
+    const tryDemoPasswordModifyCloseHandler = () => {
+        setTryDemoPasswordModify(false);
+    };
+
     const noEmailInDatabaseCloseHandler = () => {
         setNoEmailInDatabase(false);
     };
@@ -151,6 +160,16 @@ const Login = ({ onClose }: { onClose: () => void }) => {
                 <FeedbackModal
                     onClose={missingEmailInputCloseHandler}
                     message={"Kérünk, hogy először add meg az e-mail címed!"}
+                    errorMessage={undefined}
+                    messagetype="warning"
+                />
+            )}
+            {tryDemoPasswordModify && (
+                <FeedbackModal
+                    onClose={tryDemoPasswordModifyCloseHandler}
+                    message={
+                        "Te kis hamis! A demo felhasználó jelszavát nem engedem megváltoztatni! :)"
+                    }
                     errorMessage={undefined}
                     messagetype="warning"
                 />

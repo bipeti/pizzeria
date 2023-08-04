@@ -13,10 +13,28 @@
     line-height: 1.5rem;
 }
 
+.description {
+    padding: 0.5rem;
+}
+
+.description p {
+    font-size: 0.9rem !important;
+    font-weight: normal;
+    line-height: 1.3rem !important;
+    text-align: left;
+    margin: 0.3rem 0;
+}
+
+.code {
+    margin: 0 30%;
+    padding-left: 1rem;
+    min-width: 220px;
+    border: solid 2px black;
+}
+
 @media (min-width: 600px) {
     .information p {
         font-size: 1.1rem;
-        font-weight: bold;
         line-height: 1.8rem;
     }
 }

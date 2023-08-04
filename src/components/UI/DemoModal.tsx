@@ -14,10 +14,16 @@ const DemoModal = ({ onClose }: DemoModalProps) => {
         <Modal onClose={nothing} hideCloseIcon>
             <h2 className={classes.title}>Ludas Pizzéria DEMO verzió</h2>
             <div className={classes.content}>
-                <p>Ez az oldal kizárólag demonstrációs célokat szolgál!</p>
+                <p>
+                    Ez az oldal kizárólag demonstrációs célokat szolgál!{" "}
+                    <u>
+                        Az oldalon található valamennyi adat és információ
+                        fiktív!
+                    </u>
+                </p>
                 <p>
                     A megrendelés kipróbálásához belépés szükséges, ehhez
-                    használja a Leírás menüpontban található útmutatót!
+                    használja a <u>Leírás menüpontban</u> található útmutatót!
                 </p>
                 <p>
                     A regisztráció is kipróbálható és működőképes, ennek során

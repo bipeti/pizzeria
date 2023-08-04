@@ -16,6 +16,7 @@
     width: 70px;
     left: -55px;
     top: 35px;
+    cursor: pointer;
 }
 
 @media (min-width: 550px) {

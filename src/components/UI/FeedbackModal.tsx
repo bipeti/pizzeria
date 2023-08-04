@@ -38,8 +38,8 @@ const FeedbackModal = ({
                             visible={true}
                             ariaLabel="three-circles-rotating"
                             outerCircleColor="black"
-                            innerCircleColor="black"
-                            middleCircleColor="black"
+                            innerCircleColor="white"
+                            middleCircleColor="red"
                         />
                     )}
                     {!isLoading && (

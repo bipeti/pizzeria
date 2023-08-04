@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import classes from "./MainNavigation.module.css";
 import User from "../User/User";
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 
 const MainNavigation = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const isLoggedIn = useSelector(
         (state: { auth: AuthState }) => state.auth.isLoggedIn
     );
@@ -32,6 +33,10 @@ const MainNavigation = () => {
         dispatch(authActions.logout());
     };
 
+    const gotoHome = () => {
+        navigate("/");
+    };
+
     return (
         <>
             {(showLoginModal || goToLogin) && (
@@ -44,11 +49,7 @@ const MainNavigation = () => {
                         alt="logo"
                         src="logo.png"
                         className={classes.logo}
-                        title={
-                            isLoggedIn
-                                ? `Fiókom (${firstName})`
-                                : "Belépés / Regisztráció"
-                        }
+                        onClick={gotoHome}
                     />
 
                     <ul className={classes.list}>
@@ -82,7 +83,7 @@ const MainNavigation = () => {
                                 Galéria
                             </NavLink>
                         </li> */}
-                        <li>
+                        {/* <li>
                             <NavLink
                                 to="contact"
                                 className={({ isActive }) =>
@@ -90,6 +91,16 @@ const MainNavigation = () => {
                                 }
                             >
                                 Kapcsolat
+                            </NavLink>
+                        </li> */}
+                        <li>
+                            <NavLink
+                                to="description"
+                                className={({ isActive }) =>
+                                    isActive ? classes.active : ""
+                                }
+                            >
+                                Leírás
                             </NavLink>
                         </li>
                         <li>

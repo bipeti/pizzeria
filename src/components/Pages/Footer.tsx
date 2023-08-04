@@ -20,7 +20,7 @@ export default function Footer() {
                     <span className={classes["img-container"]}>
                         <img alt="mail" src="./footer/mail.png" />
                     </span>
-                    <p>ludasmeggyes@pizzeria.hu</p>
+                    <p>pizzeria@ludasmeggyes.hu</p>
                 </div>
                 <div className={classes.informations}>
                     <span className={classes["img-container"]}>
