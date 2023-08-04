@@ -17,8 +17,7 @@ export default function Description() {
                 <p>
                     Elérhetőek különböző extrák, illetve gyerekadag egyes
                     ételeknél, ezeket a kosárra kattintás után tudod testre
-                    szabni. Az italoknál nincsenek ilyen lehetőségek, ott a
-                    kosárba helyezés egyszerűbb, azonnal megtörténik.
+                    szabni. Az italoknál a kosárba helyezés azonnal megtörténik.
                 </p>
                 <p>
                     A megrendelő kérésére a csomagolási díjak ételenként
@@ -39,7 +38,7 @@ export default function Description() {
                 <p>
                     A regisztráció folyamatát is kipróbálhatod, ehhez az e-mail
                     címeden kívül kérem, hogy te is{" "}
-                    <u>csak fiktív adatokat használj</u>. Az e-mail címre
+                    <u>csak fiktív adatokat használj</u>! Az e-mail címre
                     érkezik majd egy aktivációs link, ezért annak valósnak kell
                     lennie.
                 </p>
