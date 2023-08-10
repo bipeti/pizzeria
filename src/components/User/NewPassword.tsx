@@ -20,7 +20,7 @@ import {
     getLostPasswordData,
     removeLostPasswordData,
 } from "../../store/general-slice";
-import { SECRET_PASS } from "../utils/myConsts";
+import { DEMO_EMAIL, SECRET_PASS } from "../utils/myConsts";
 
 interface LoginFormValues {
     newPassword: string;
@@ -135,7 +135,7 @@ const NewPassword = () => {
             // password modification from inside
             relatedEmail = user.email;
         }
-        if (relatedEmail === "demo@ludasmeggyes.hu") {
+        if (relatedEmail === DEMO_EMAIL) {
             setTryModify(true);
             return;
         }

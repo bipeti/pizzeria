@@ -15,16 +15,6 @@ export default function Description() {
                     fekvő módjaiban is ki tudod próbálni.
                 </p>
                 <p>
-                    Elérhetőek különböző extrák, illetve gyerekadag egyes
-                    ételeknél, ezeket a kosárra kattintás után tudod testre
-                    szabni. Az italoknál a kosárba helyezés azonnal megtörténik.
-                </p>
-                <p>
-                    A megrendelő kérésére a csomagolási díjak ételenként
-                    eltérőek lehetnek, ezek a kosárban összesítve kerülnek
-                    feltüntetésre.
-                </p>
-                <p>
                     Az oldal látogatói tudják böngészni a kínálatot, tudnak
                     kosárba helyezni, azonban a megrendeléshez bejelentkezés
                     szükséges. A regisztrációmentes, gyors belépés érdekében egy

@@ -10,6 +10,9 @@ export const MY_PUBLIC_KEY = "spbia2xqnaePNp_0N";
 export const DB_PATH =
     "https://pizzeria-39338-default-rtdb.europe-west1.firebasedatabase.app";
 
+/* Demo user */
+export const DEMO_EMAIL = "demo@ludasmeggyes.hu";
+
 /* tokens */
 export const HOURS_TO_SAVE_CARTS_DATA = 2;
 export const HOURS_TO_SAVE_USERS_DATA = 2;

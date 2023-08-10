@@ -16,6 +16,7 @@ import {
     generalActions,
     sendLostPasswordData,
 } from "../../store/general-slice";
+import { DEMO_EMAIL } from "../utils/myConsts";
 
 interface LoginFormValues {
     email: string;
@@ -108,7 +109,7 @@ const Login = ({ onClose }: { onClose: () => void }) => {
             setMissingEmailInput(true);
             return;
         }
-        if (email === "demo@ludasmeggyes.hu") {
+        if (email === DEMO_EMAIL) {
             setTryDemoPasswordModify(true);
             return;
         }

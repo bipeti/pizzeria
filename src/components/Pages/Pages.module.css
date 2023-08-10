@@ -26,16 +26,28 @@
 }
 
 .code {
-    margin: 0 30%;
+    margin: 0 20%;
     padding-left: 1rem;
     min-width: 220px;
     border: solid 2px black;
 }
 
+@media (max-width: 400px) {
+    .code {
+        margin: 1rem;
+        padding: 0 0.3rem;
+    }
+}
 @media (min-width: 600px) {
     .information p {
         font-size: 1.1rem;
         line-height: 1.8rem;
+    }
+}
+
+@media (min-width: 700px) {
+    .code {
+        margin: 0 30%;
     }
 }
 

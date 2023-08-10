@@ -16,6 +16,7 @@ import {
     createNewUser,
     generalActions,
 } from "../../store/general-slice";
+import { DEMO_EMAIL } from "../utils/myConsts";
 
 interface RegistrationFormValues extends UserData {
     dataProtection: boolean;
@@ -166,7 +167,7 @@ const Registration = ({ userData }: { userData?: UserData }) => {
     };
 
     const modifyUserHandler = async (userData: RegistrationFormValues) => {
-        if (userData.email === "demo@ludasmeggyes.hu") {
+        if (userData.email === DEMO_EMAIL) {
             setTryModify(true);
             return;
         }
